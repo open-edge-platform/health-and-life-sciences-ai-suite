@@ -48,6 +48,10 @@ const WorkloadCard: React.FC<WorkloadCardProps> = ({
   frameData,
   people, // ✅ Use people instead of joints
 }) => {
+  // ✅ Add the poseStreamUrl definition here, right after the component props
+  const hostIp = (import.meta as any).env?.VITE_HOST_IP || (typeof window !== 'undefined' ? window.location.hostname : 'localhost');
+  const poseStreamUrl = `${window.location.protocol}//${hostIp}:8085/video_feed`;
+
   const statusColors = {
     idle: '#6c757d',
     running: '#28a745',
@@ -57,12 +61,13 @@ const WorkloadCard: React.FC<WorkloadCardProps> = ({
 
   const formatValue = (key: string, value: any) => {
     if (value === undefined || value === null) return '--';
-
     if (key === 'prediction') return String(value);
     if (key === 'filename') return String(value);
     if (key === 'activity') return String(value);
-
-    if (key === 'HR' || key === 'RR' || key === 'SpO2' || key === 'CO2_ET' || key === 'BP_DIA') {
+    if (key === 'joints') return 'Detected';
+    
+    // Format all numeric vitals
+    if (key === 'HR' || key === 'RR' || key === 'SpO2' || key === 'CO2_ET' || key === 'BP_DIA' || key === 'BP_SYS') {
       return typeof value === 'number' ? value.toFixed(1) : '--';
     }
 
@@ -136,7 +141,6 @@ const WorkloadCard: React.FC<WorkloadCardProps> = ({
     ctx.strokeStyle = config.color;
     ctx.lineWidth = 2;
     ctx.beginPath();
-
     waveform.forEach((value, i) => {
       const x = (i / waveform.length) * width;
       const y = height - ((value - min) / range) * height;
@@ -216,7 +220,7 @@ const WorkloadCard: React.FC<WorkloadCardProps> = ({
             </h4>
             {status === 'running' ? (
               <img
-                src="http://localhost:8085/video_feed"
+                src={poseStreamUrl}
                 alt="3D Pose Stream"
                 style={{
                   width: '100%',
@@ -339,10 +343,6 @@ const WorkloadCard: React.FC<WorkloadCardProps> = ({
                 {config.dataKeys.map((key) => {
                   const value = latestVitals[key];
 
-                  if (config.id === 'ai-ecg') {
-                    console.log(`[WorkloadCard] AI-ECG rendering ${key}:`, value);
-                  }
-
                   if (value === undefined || value === null) return null;
 
                   return (
@@ -355,19 +355,12 @@ const WorkloadCard: React.FC<WorkloadCardProps> = ({
                 })}
               </div>
             ) : (
-              <div className="no-vitals">
-                Waiting for data...
-                {config.id === 'ai-ecg' && (
-                  <div style={{ fontSize: '10px', color: '#999', marginTop: '4px' }}>
-                    Debug: {JSON.stringify(latestVitals)}
-                  </div>
-                )}
-              </div>
+              <div className="no-vitals">Waiting for data...</div>
             )}
           </div>
 
           {/* Waveform - for other workloads */}
-          {config.hasWaveform && waveform && waveform.length > 0 && (
+          {isExpanded && config.hasWaveform && waveform && waveform.length > 0 && (
             <div className="waveform-preview" style={{ marginTop: '12px' }}>
               <h4 style={{ fontSize: '12px', marginBottom: '8px', color: '#6A6D75' }}>
                 {config.id === 'rppg'
@@ -379,14 +372,8 @@ const WorkloadCard: React.FC<WorkloadCardProps> = ({
               <canvas
                 ref={renderWaveform}
                 width={600}
-                height={isExpanded ? 150 : 100}
-                style={{
-                  width: '100%',
-                  height: isExpanded ? '150px' : '100px',
-                  background: '#f8f9fa',
-                  borderRadius: '4px',
-                  border: '1px solid #e0e0e0',
-                }}
+                height={150}
+                className="waveform-canvas"
               />
             </div>
           )}
