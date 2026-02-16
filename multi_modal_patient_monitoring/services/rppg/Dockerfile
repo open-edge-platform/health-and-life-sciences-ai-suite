@@ -5,6 +5,7 @@
 
 FROM python:3.12-slim
 
+# Set proxies if needed
 ARG HTTP_PROXY
 ARG HTTPS_PROXY
 ARG NO_PROXY
