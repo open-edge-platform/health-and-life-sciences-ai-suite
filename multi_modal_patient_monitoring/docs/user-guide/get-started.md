@@ -24,9 +24,9 @@ git sparse-checkout init --cone
 
 git sparse-checkout set health-and-life-sciences-ai-suite
 
-git checkout main
+git checkout release-2026.0.0
 
-cd edge-ai-suites/health-and-life-sciences-ai-suite/multi_modal_patient_monitoring
+cd health-and-life-sciences-ai-suite/multi_modal_patient_monitoring
 ```
 
 ## Configure Hardware Target
