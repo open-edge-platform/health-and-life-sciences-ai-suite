@@ -1,0 +1,3 @@
+[submodule "multi_modal_patient_monitoring/services/mdpnp/mdpnp"]
+	path = multi_modal_patient_monitoring/services/mdpnp/mdpnp
+	url = https://github.com/mdpnp/mdpnp.git

@@ -20,3 +20,26 @@ For full setup, usage, and contribution guide, see:
 
 
 Intel is committed to respecting human rights and avoiding complicity in human rights abuses. See [Intel's Global Human Rights Principles](https://www.intel.com/content/www/us/en/policy/policy-human-rights.html). Intel's products and software are intended only to be used in applications that do not cause or contribute to a violation of an internationally recognized human right.  
+
+## Contribute
+
+Read the [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting issues and pull requests.
+
+## Community and Support
+
+For support, submit your bug report and feature request to [Github Issues](https://github.com/open-edge-platform/health-and-life-sciences-ai-suite/issues).
+
+## License
+
+The **Health and Life Science AI Suite** project is licensed under the [APACHE 2.0](LICENSE).  
+
+## Intended Use
+
+Applications developed in this repository, unless stated otherwise, are intended for reference
+and demonstration purposes, not for production environments.
+Certain features, such as authentication, TLS termination, and external access controls are
+assumed to be covered at the infrastructure level.
+
+For more information, refer to the
+[Notes on Usage](https://docs.openedgeplatform.intel.com/dev/OEP-articles/notes-on-usage.html)
+document.
