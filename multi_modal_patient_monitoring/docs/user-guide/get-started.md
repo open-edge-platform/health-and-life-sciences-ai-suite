@@ -11,8 +11,18 @@ Ensure your environment meets the [System Requirements](./get-started/system-req
 ## 1. Clone the Repository
 
 Go to the target directory of your choice and clone the suite.
-To clone a different release branch or tag, replace `release-2026.2.0` with the desired one.
+For current development sources, use the standalone repository on `main`:
 To learn more on partial cloning, check the [Repository Cloning guide](https://docs.openedgeplatform.intel.com/dev/OEP-articles/contribution-guide.html#repository-cloning-partial-cloning).
+
+```bash
+git clone --filter=blob:none --sparse --branch main https://github.com/open-edge-platform/health-and-life-sciences-ai-suite.git
+cd health-and-life-sciences-ai-suite
+git sparse-checkout set multi_modal_patient_monitoring
+cd multi_modal_patient_monitoring
+```
+
+For the previous 2026.2 release, use the original monorepo checkout below instead
+and follow the documentation from that checkout. It is not the current migrated source:
 
 ```bash
 git clone --filter=blob:none --sparse --branch release-2026.2.0 https://github.com/open-edge-platform/edge-ai-suites.git
