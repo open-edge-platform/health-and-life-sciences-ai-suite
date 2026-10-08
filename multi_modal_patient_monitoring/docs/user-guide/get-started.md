@@ -85,13 +85,13 @@ models/downloads/
 1. RPPG Model - [MTTS-CAN](https://github.com/xliucs/MTTS-CAN/raw/main/mtts_can.hdf5)
 
    Place the model file at: `models/downloads/rppg/mtts_can.hdf5`
-   
+
 2. 3D Pose Model - [Human Pose Estimation 3D 0001](https://storage.openvinotoolkit.org/repositories/open_model_zoo/public/2022.1/human-pose-estimation-3d-0001/human-pose-estimation-3d.tar.gz)
 
    Place the archive at: `models/downloads/3d-pose/human-pose-estimation-3d.tar.gz`
-   
+
 3. AI-ECG Model - HuBERT-ECG Small
-   
+
    a. Create and activate a Python virtual environment:
    ```bash
    python3 -m venv hf-venv
@@ -110,9 +110,9 @@ models/downloads/
 
 
 > **Third-Party Content**
-> 
+>
 > *In the course of using these Intel-provided instruction, users may choose to download content (e.g., models, dataset, etc.) created and distributed by third parties. In doing so, these users acknowledge and agree that they have done so after reviewing background information about the content and agreeing to the license governing the content they select.*
-> 
+>
 > ***Notice**: Intel does not create the content and does not warrant its accuracy or quality. By accessing the third-party content, or using materials trained on or with such content, you are indicating your acceptance of the terms associated with that content and warranting that your use complies with the applicable license.*
 
 ### Verify the contents:
