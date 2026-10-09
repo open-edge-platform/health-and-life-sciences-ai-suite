@@ -3,10 +3,10 @@
 <!--hide_directive
 ::::{container} component_header_row
 <div class="component_card_widget">
-  <a class="icon_github" href="https://github.com/open-edge-platform/edge-ai-suites/tree/main/health-and-life-sciences-ai-suite/surgical-instrument">
+  <a class="icon_github" href="https://github.com/open-edge-platform/health-and-life-sciences-ai-suite/tree/main/surgical-instrument">
      GitHub
   </a>
-  <a class="icon_document" href="https://github.com/open-edge-platform/edge-ai-suites/blob/main/health-and-life-sciences-ai-suite/surgical-instrument/README.md">
+  <a class="icon_document" href="https://github.com/open-edge-platform/health-and-life-sciences-ai-suite/blob/main/surgical-instrument/README.md">
      Readme
   </a>
 </div>

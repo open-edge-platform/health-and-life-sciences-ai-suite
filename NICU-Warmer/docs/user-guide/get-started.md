@@ -13,10 +13,8 @@ If you want to clone a specific release branch, replace `main` with the desired 
 To learn more on partial cloning, check the [Repository Cloning guide](https://docs.openedgeplatform.intel.com/dev/OEP-articles/contribution-guide.html#repository-cloning-partial-cloning).
 
 ```bash
-git clone --filter=blob:none --sparse --branch main \
-  https://github.com/open-edge-platform/edge-ai-suites.git
-cd edge-ai-suites
-git sparse-checkout set health-and-life-sciences-ai-suite/NICU-Warmer
+git clone --filter=blob:none --branch main \
+  https://github.com/open-edge-platform/health-and-life-sciences-ai-suite.git
 cd health-and-life-sciences-ai-suite/NICU-Warmer
 ```
 
