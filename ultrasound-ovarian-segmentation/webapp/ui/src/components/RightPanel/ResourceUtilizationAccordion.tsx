@@ -27,7 +27,17 @@ ChartJS.register(
 export function ResourceUtilizationAccordion() {
   const resourceMetrics = useAppSelector((state) => state.metrics.resources);
   const lastUpdated = useAppSelector((state) => state.metrics.lastUpdated);
-  
+  const useCases = useAppSelector((state) => state.pipeline.useCases);
+  const selection = useAppSelector((state) => state.pipeline.selection);
+  const runningConfig = useAppSelector((state) => state.pipeline.runningConfig);
+
+  // The NPU chart only makes sense for models that can run on the NPU. DS2Net
+  // runs on CPU/iGPU and never schedules NPU work, so show an explicit note
+  // instead of a perpetual "Waiting for data..." that looks like a broken
+  // collector.
+  const activeKey = runningConfig?.usecase || selection.usecase;
+  const modelUsesNpu = !!useCases.find((u) => u.key === activeKey)?.devices?.includes('NPU');
+
   const [resourceData, setResourceData] = useState<any>({
     cpu_utilization: [],
     gpu_utilization: [],
@@ -194,7 +204,11 @@ export function ResourceUtilizationAccordion() {
               {resourceData.npu_utilization.length > 0 ? (
                 <Line data={npuChartData} options={baseChartOptions} />
               ) : (
-                <div className="no-data">Waiting for data...</div>
+                <div className="no-data">
+                  {modelUsesNpu
+                    ? 'Waiting for data...'
+                    : 'NPU not used by this model (runs on CPU/iGPU)'}
+                </div>
               )}
             </div>
           </div>
