@@ -36,7 +36,12 @@ export function ResourceUtilizationAccordion() {
   // instead of a perpetual "Waiting for data..." that looks like a broken
   // collector.
   const activeKey = runningConfig?.usecase || selection.usecase;
-  const modelUsesNpu = !!useCases.find((u) => u.key === activeKey)?.devices?.includes('NPU');
+  const activeUseCase = useCases.find((u) => u.key === activeKey);
+  const modelUsesNpu = !!activeUseCase?.devices?.includes('NPU');
+  const npuEmptyTitle = modelUsesNpu ? 'Waiting for NPU data' : 'NPU not active for this model';
+  const npuEmptyDetail = modelUsesNpu
+    ? 'The NPU collector has not reported samples yet.'
+    : 'DS2Net runs on CPU or Intel iGPU, so no NPU utilization is expected.';
 
   const [resourceData, setResourceData] = useState<any>({
     cpu_utilization: [],
@@ -204,10 +209,18 @@ export function ResourceUtilizationAccordion() {
               {resourceData.npu_utilization.length > 0 ? (
                 <Line data={npuChartData} options={baseChartOptions} />
               ) : (
-                <div className="no-data">
-                  {modelUsesNpu
-                    ? 'Waiting for data...'
-                    : 'NPU not used by this model (runs on CPU/iGPU)'}
+                <div
+                  className="no-data"
+                  style={{
+                    height: '100%', display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center', gap: 8,
+                    border: '1px dashed #c8d3de', borderRadius: 6,
+                    background: '#f7fafc', color: '#4b5b6b', textAlign: 'center',
+                    padding: '0 16px',
+                  }}
+                >
+                  <strong style={{ color: '#263238' }}>{npuEmptyTitle}</strong>
+                  <span>{npuEmptyDetail}</span>
                 </div>
               )}
             </div>
