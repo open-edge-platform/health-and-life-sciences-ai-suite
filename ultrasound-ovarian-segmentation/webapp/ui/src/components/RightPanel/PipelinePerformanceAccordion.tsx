@@ -38,8 +38,6 @@ export function PipelinePerformanceAccordion() {
   const precision = (runningConfig?.precision || selection.precision || 'fp16').toUpperCase();
   const model = runningConfig?.model || uc?.model || 'UltraSAM';
   const label = runningConfig?.label || uc?.label || 'Ovarian Tumor Segmentation';
-  const kpiLat = runningConfig?.kpi_latency_ms ?? uc?.kpi_latency_ms ?? 0;
-  const kpiFps = runningConfig?.kpi_fps ?? uc?.kpi_fps ?? 0;
 
   const hasData = metrics.window > 0;
   const fps = metrics.fps;
@@ -63,8 +61,8 @@ export function PipelinePerformanceAccordion() {
       <div className="pipeline-perf">
         {/* Live stat tiles */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
-          <StatCard label="FPS" value={hasData ? fps.toFixed(1) : '—'} sub={`target ≥ ${kpiFps}`} />
-          <StatCard label="Latency" value={hasData ? `${mean.toFixed(1)} ms` : '—'} sub={`target ≤ ${kpiLat} ms`} />
+          <StatCard label="FPS" value={hasData ? fps.toFixed(1) : '—'} />
+          <StatCard label="Latency" value={hasData ? `${mean.toFixed(1)} ms` : '—'} />
           <StatCard label="P90" value={hasData ? `${metrics.p90_ms.toFixed(1)} ms` : '—'} />
           <StatCard label="P99" value={hasData ? `${metrics.p99_ms.toFixed(1)} ms` : '—'} />
         </div>
