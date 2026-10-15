@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ovarian Ultrasound AI — Intel Edge</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <!-- Readiness gate: hidden once /api/readiness reports ready -->
+  <div id="gate" class="gate">
+    <div class="gate-card">
+      <div class="spinner"></div>
+      <p>Starting backend…</p>
+      <p class="gate-sub" id="gate-sub">Checking OpenVINO devices</p>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <h1>Ovarian Ultrasound AI</h1>
+      <span class="tag">Intel&nbsp;OpenVINO&nbsp;&middot;&nbsp;CPU / iGPU / NPU</span>
+    </div>
+    <div id="conn" class="conn">connecting…</div>
+  </header>
+
+  <main class="grid">
+    <!-- LEFT: configuration -->
+    <section class="card config">
+      <h2>Configuration</h2>
+
+      <label class="field">
+        <span>Use case</span>
+        <select id="usecase"></select>
+      </label>
+      <p id="uc-note" class="note"></p>
+
+      <label class="field">
+        <span>Device</span>
+        <select id="device"></select>
+      </label>
+
+      <label class="field">
+        <span>Precision</span>
+        <select id="precision"></select>
+      </label>
+
+      <label class="field">
+        <span>Video source</span>
+        <input id="video" type="text" placeholder="data/example1.mp4" />
+      </label>
+
+      <div class="btn-row">
+        <button id="start" class="btn primary">Start</button>
+        <button id="stop" class="btn">Stop</button>
+        <button id="reset" class="btn ghost">Reset</button>
+      </div>
+
+      <p class="hint">The video opens in a separate pop-up window
+        (Original&nbsp;|&nbsp;Segmentation). Press <kbd>ESC</kbd> in that window to close it.</p>
+      <p id="err" class="err"></p>
+    </section>
+
+    <!-- RIGHT: metrics -->
+    <div class="right">
+      <section class="card">
+        <h2>Pipeline Performance</h2>
+        <div class="state-row">
+          <span>Status</span>
+          <span id="state-pill" class="pill idle">idle</span>
+        </div>
+        <div class="table-wrap">
+          <table id="perf">
+            <thead>
+              <tr>
+                <th>Workload</th><th>Model</th><th>Device</th><th>Prec</th>
+                <th>FPS</th><th>Mean</th><th>P50</th><th>P90</th><th>P95</th><th>P99</th><th>KPI</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="perf-row"><td colspan="11" class="muted">Not running</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Model &amp; Input</h2>
+        <dl class="kv">
+          <dt>Model</dt><dd id="mi-model">—</dd>
+          <dt>Precision</dt><dd id="mi-prec">—</dd>
+          <dt>Task</dt><dd id="mi-task">—</dd>
+          <dt>Input tensor</dt><dd id="mi-input">—</dd>
+          <dt>Target device</dt><dd id="mi-device">—</dd>
+          <dt>Device name</dt><dd id="mi-devname">—</dd>
+          <dt>IR</dt><dd id="mi-ir" class="mono">—</dd>
+        </dl>
+      </section>
+
+      <section class="card">
+        <h2>Platform</h2>
+        <div class="util">
+          <div class="util-row"><span>CPU</span>
+            <div class="bar"><i id="cpu-bar"></i></div><span id="cpu-pct" class="pct">—</span></div>
+          <div class="util-row"><span>iGPU</span>
+            <div class="bar"><i id="gpu-bar"></i></div><span id="gpu-pct" class="pct">n/a</span></div>
+          <div class="util-row"><span>NPU</span>
+            <div class="bar"><i id="npu-bar"></i></div><span id="npu-pct" class="pct">n/a</span></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

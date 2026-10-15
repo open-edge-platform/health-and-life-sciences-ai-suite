@@ -1,0 +1,93 @@
+Third Party Programs File
+
+This file contains the list of third party software ("third party programs")
+used by the Ultrasound Ovarian Segmentation sample application and their
+required notices and/or license terms. The application itself is released under
+the Apache License, Version 2.0.
+
+This application does NOT redistribute any model weights, model files, or
+datasets. The model-preparation step downloads model weights and a dataset
+locally and produces an OpenVINO IR on the user's machine; review the
+corresponding licenses below before any non-evaluation use.
+
+The app offers two model architectures. The default `ds2net` arch uses the
+dependencies in sections 2 and 3. The optional `sam` arch additionally uses the
+dependencies in sections 2b and the weights in section 3.
+
+-------------------------------------------------------------
+1. Runtime dependencies (Python, installed via requirements.txt)
+
+OpenVINO Toolkit (openvino) — Apache License 2.0
+Copyright (c) Intel Corporation.
+https://github.com/openvinotoolkit/openvino
+
+OpenCV (opencv-python) — Apache License 2.0
+Copyright (c) OpenCV team.
+https://github.com/opencv/opencv-python
+
+NumPy — BSD 3-Clause License
+Copyright (c) NumPy Developers.
+https://github.com/numpy/numpy
+
+pywin32 — Python Software Foundation License 2.0
+Copyright (c) Mark Hammond and contributors.
+https://github.com/mhammond/pywin32
+
+-------------------------------------------------------------
+2. Model-preparation dependencies (Python, installed via backend/requirements.txt)
+
+PyTorch (torch) — BSD 3-Clause License
+Copyright (c) Meta Platforms, Inc. and affiliates.
+https://github.com/pytorch/pytorch
+
+Hugging Face Transformers — Apache License 2.0
+Copyright (c) The HuggingFace Inc. team.
+https://github.com/huggingface/transformers
+
+Pillow — HPND License (PIL Software License)
+Copyright (c) Jeffrey A. Clark and contributors.
+https://github.com/python-pillow/Pillow
+
+-------------------------------------------------------------
+2b. SAM arch model-preparation dependencies (installed via backend/requirements-sam.txt)
+
+Segment Anything (segment-anything) — Apache License 2.0
+Copyright (c) Meta Platforms, Inc. and affiliates.
+https://github.com/facebookresearch/segment-anything
+
+Ultralytics YOLOv8 (ultralytics) — GNU Affero General Public License v3.0 (AGPL-3.0)
+Copyright (c) Ultralytics.
+https://github.com/ultralytics/ultralytics
+NOTE: ultralytics is used at BUILD TIME ONLY — to train the lesion detector and
+export it to an OpenVINO IR (the base yolov8n.pt it downloads is likewise
+AGPL-3.0 and build-time only). The runtime application loads the exported IR with
+OpenVINO/OpenCV and does NOT import or link ultralytics, so the shipped runtime
+is not a derivative work of AGPL-3.0 code. If AGPL-3.0 is unacceptable for your
+build or deployment, substitute any detector that emits an [x, y, w, h] lesion
+box. The SAM encoder/decoder path itself is Apache-2.0.
+
+-------------------------------------------------------------
+3. Reference model and dataset (obtained locally by the user; NOT redistributed)
+
+MMOTU_DS2Net (reference model / method) — Apache License 2.0
+Copyright (c) cv516Buaa.
+https://github.com/cv516Buaa/MMOTU_DS2Net
+
+MMOTU-2D (OTU_2d) dataset — Apache License 2.0
+Copyright (c) cv516Buaa.
+https://github.com/cv516Buaa/MMOTU_DS2Net
+
+SegFormer / MiT-B5 backbone weights (nvidia/mit-b5) — NVIDIA Source Code License
+(research / non-commercial). Used only as the training initialization. These
+weights are NOT redistributed with this app; the user downloads them. For any
+commercial or non-research use, review NVIDIA's SegFormer license and consider a
+permissively licensed backbone or training from scratch.
+Copyright (c) NVIDIA Corporation.
+https://github.com/NVlabs/SegFormer
+
+Segment Anything Model (SAM) ViT-B checkpoint (sam_vit_b_01ec64.pth) — Apache
+License 2.0. Used by the `sam` arch as the encoder fine-tune initialization and
+as the frozen prompt-encoder + mask-decoder. NOT redistributed with this app; the
+user downloads it.
+Copyright (c) Meta Platforms, Inc. and affiliates.
+https://github.com/facebookresearch/segment-anything

@@ -1,0 +1,31 @@
+# Virtual environments
+venv/
+.venv/
+.venv-backend/
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Trained checkpoints and exported OpenVINO IR are NOT committed.
+# Produce them with prepare_model.ps1 (see docs/user-guide/get-started/model-preparation.md).
+models/*
+!models/README.md
+
+# Datasets (download MMOTU-2D locally; see the model-preparation guide)
+data/
+datasets/
+
+# Run artifacts
+reports/
+*.mp4
+cache/
+
+# Vendor monitoring binaries (SoCWatch / Level Zero, ~139 MB) are staged
+# separately on the target box, not committed. See the web-dashboard guide.
+monitoring/tools/
+
+# Web UI: the prebuilt webapp/ui/dist IS committed so the target needs no
+# npm/Node toolchain; never commit node_modules or Vite's dev cache.
+webapp/ui/node_modules/
+webapp/ui/.vite/

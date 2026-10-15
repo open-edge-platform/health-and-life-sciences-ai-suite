@@ -1,0 +1,13 @@
+# Model-preparation dependencies (training + OpenVINO export + eval).
+# Installed into the SAME app venv on top of requirements.txt.
+#
+# Export and eval run on CPU torch (export only traces a forward pass).
+# TRAINING on the Intel Arc iGPU needs the Intel XPU build of PyTorch — install it
+# first from the Intel extension index, e.g.:
+#   pip install torch --index-url https://download.pytorch.org/whl/xpu
+# then install the rest below. CPU training also works (slower).
+torch>=2.1
+transformers>=4.38
+pillow>=10
+numpy>=1.26,<3
+openvino==2026.2.0

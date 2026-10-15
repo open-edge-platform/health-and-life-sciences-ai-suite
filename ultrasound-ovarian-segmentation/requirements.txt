@@ -1,0 +1,7 @@
+# Runtime dependencies for the ultrasound ovarian segmentation app (Windows).
+# Pin OpenVINO to the validated runtime on the target box (Intel Core Ultra, OV 2026.2.0).
+openvino==2026.2.0
+numpy>=1.26,<3
+opencv-python>=4.9
+# Windows GPU-Engine perf counters for the adaptive iGPU utilization cap.
+pywin32>=306 ; platform_system == "Windows"

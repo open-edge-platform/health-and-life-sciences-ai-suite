@@ -1,0 +1,12 @@
+# Extra runtime dependencies for the web dashboard, on top of the base
+# requirements.txt (OpenVINO, OpenCV, NumPy, pywin32).
+#
+#   Install:       .\venv\Scripts\pip install -r webapp\requirements.txt
+#   Existing venv: reuse one that already has these (run_webapp.ps1 -Venv),
+#                  or install from a local wheelhouse.
+#
+flask>=3.0            # control-plane server (serves the UI, start/stop, SSE)
+psutil>=5.9           # CPU + memory utilization (dashboard fallback + collectors)
+# pandas is only needed for the Windows power (SoCWatch) graph; the rest of the
+# dashboard works without it.
+pandas>=2.0 ; platform_system == "Windows"

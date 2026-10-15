@@ -1,0 +1,20 @@
+# SAM-256 model-preparation dependencies (training + OpenVINO export + eval).
+# Installed into the SAME app venv on top of requirements.txt, e.g.:
+#   pip install -r backend/requirements-sam.txt
+#
+# Encoder fine-tune + ONNX/IR export run on torch. Training on the Intel Arc
+# iGPU needs the Intel XPU build of PyTorch — install it first, e.g.:
+#   pip install torch --index-url https://download.pytorch.org/whl/xpu
+# then install the rest below. CPU training also works (slower).
+#
+# LICENCES:
+#   segment-anything  Apache-2.0  (SAM image encoder + prompt encoder + mask decoder)
+#   ultralytics       AGPL-3.0    (YOLOv8 detector) -- BUILD-TIME ONLY. The runtime
+#                                 app loads the exported OpenVINO IR and never imports
+#                                 ultralytics. See backend/bootstrap/sam/train_yolo.py.
+torch>=2.1
+numpy>=1.26,<3
+opencv-python>=4.8
+openvino==2026.2.0
+segment-anything>=1.0
+ultralytics>=8.0
