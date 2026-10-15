@@ -11,6 +11,7 @@ const TopPanel: React.FC = () => {
   const useCases = useAppSelector((s) => s.pipeline.useCases);
   const lifecycle = useAppSelector((s) => s.pipeline.lifecycle);
   const error = useAppSelector((s) => s.pipeline.error);
+  const runningConfig = useAppSelector((s) => s.pipeline.runningConfig);
   const [notification, setNotification] = useState('');
   const [busy, setBusy] = useState(false);
 
@@ -109,6 +110,18 @@ const TopPanel: React.FC = () => {
       </div>
 
       <div className="spacer"></div>
+
+      {runningConfig?.input && (
+        <div
+          title={runningConfig.input}
+          style={{
+            fontSize: 12, color: '#555', paddingRight: 12, maxWidth: 420,
+            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+          }}
+        >
+          📁 Source: <span style={{ fontFamily: 'monospace' }}>{runningConfig.input}</span>
+        </div>
+      )}
 
       <div style={{ fontSize: 13, color: '#555', fontWeight: 600, paddingRight: 8 }}>
         Status: <span style={{ color: statusColor }}>{statusText}</span>

@@ -110,7 +110,7 @@ const SettingsPanel: React.FC = () => {
           <input
             className="config-input"
             type="text"
-            placeholder="leave blank to use the sample dataset"
+            placeholder="leave blank to use the prepared dataset (data/OTU_2d/images)"
             value={selection.video}
             disabled={isProcessing}
             onChange={(e) => dispatch(setSelection({ video: e.target.value }))}
