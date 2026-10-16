@@ -24,6 +24,10 @@
 #   # SAM: train YOLO + fine-tune the encoder first, then export + verify:
 #   .\prepare_model.ps1 -Arch sam -Train -Verify
 #
+#   # Training runs on the Intel iGPU by default (-TrainDevice GPU). To force a
+#   # CPU train (e.g. if the iGPU torch/XPU backend is unavailable):
+#   .\prepare_model.ps1 -Arch sam -Train -Verify -TrainDevice CPU
+#
 [CmdletBinding()]
 param(
     [ValidateSet("ds2net", "sam")]
@@ -33,6 +37,8 @@ param(
     [string]$Data = "data\OTU_2d",
     [ValidateSet("GPU", "CPU", "NPU")]
     [string]$Device = "GPU",
+    [ValidateSet("GPU", "CPU")]
+    [string]$TrainDevice = "GPU",
     [switch]$Train,
     [switch]$Verify,
     [string]$Venv = "venv",
@@ -46,6 +52,12 @@ $py = Join-Path $Venv "Scripts\python.exe"
 if (-not (Test-Path $py)) {
     Write-Error "virtual environment not found ($py). Run .\setup.ps1 first."
 }
+
+# Training always defaults to the Intel iGPU. PyTorch/ultralytics use their own
+# device strings (xpu = Intel GPU) which differ from the OpenVINO runtime/eval
+# names (-Device GPU/CPU/NPU). Map -TrainDevice -> torch string; pass
+# -TrainDevice CPU only to force CPU training.
+$trainDevice = if ($TrainDevice -eq "CPU") { "cpu" } else { "xpu" }
 
 if ($Arch -eq "sam") {
     # SAM-256 pipeline: three IRs (YOLO@320 bbox, encoder@256, multimask decoder).
@@ -76,12 +88,12 @@ if ($Arch -eq "sam") {
     }
 
     if ($Train) {
-        Write-Host "[prepare] SAM -Train: YOLO labels + YOLOv8n train + SAM encoder fine-tune (the long step)"
+        Write-Host "[prepare] SAM -Train (train device=$TrainDevice -> torch '$trainDevice'): YOLO labels + YOLOv8n train + SAM encoder fine-tune (the long step)"
         & $py -m backend.bootstrap.sam.prepare_yolo_data --data $Data
         if ($LASTEXITCODE -ne 0) { Write-Error "prepare_yolo_data failed" }
-        & $py -m backend.bootstrap.sam.train_yolo --device cpu
+        & $py -m backend.bootstrap.sam.train_yolo --device $trainDevice
         if ($LASTEXITCODE -ne 0) { Write-Error "train_yolo failed" }
-        & $py -m backend.bootstrap.sam.finetune_encoder --weights $stockWeights --data $Data --device xpu
+        & $py -m backend.bootstrap.sam.finetune_encoder --weights $stockWeights --data $Data --device $trainDevice
         if ($LASTEXITCODE -ne 0) { Write-Error "finetune_encoder failed" }
     }
 
@@ -144,8 +156,8 @@ if ($SkipInstall -or $haveBackend) {
 }
 
 if ($Train) {
-    Write-Host "[prepare] training SegFormer-B5 on MMOTU-2D (this is the long step)"
-    & $py -m backend.bootstrap.train --data $Data --res $Res --device xpu --out $Checkpoint
+    Write-Host "[prepare] training SegFormer-B5 on MMOTU-2D (train device=$TrainDevice -> torch '$trainDevice', the long step)"
+    & $py -m backend.bootstrap.train --data $Data --res $Res --device $trainDevice --out $Checkpoint
     if ($LASTEXITCODE -ne 0) { Write-Error "training failed" }
 }
 

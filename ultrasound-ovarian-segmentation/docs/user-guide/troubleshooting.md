@@ -76,6 +76,24 @@ encoder was fine-tuned with the wrong preprocessing — the fine-tune and the
 runtime must both scale images by `/255` (no mean/std). See
 [Model Preparation](./get-started/model-preparation.md#sam-256-arch).
 
+## SAM training runs on CPU — how to use the iGPU
+
+`.\prepare_model.ps1 -Arch sam -Train` trains on the Intel iGPU by default
+(`-TrainDevice GPU` → PyTorch `xpu`) for both the YOLO detector and the encoder
+fine-tune. To force CPU, pass `-TrainDevice CPU`. If training still falls back to
+CPU with `-TrainDevice GPU`, the venv's PyTorch has no Intel XPU support — confirm
+with:
+
+```powershell
+venv\Scripts\python.exe -c "import torch; print(hasattr(torch,'xpu') and torch.xpu.is_available())"
+```
+
+If this prints `False`, install a PyTorch build with Intel XPU support (or run on
+CPU with `-TrainDevice CPU`, which is slower). `-TrainDevice` selects the training
+device (default `GPU`) and is separate from `-Device`, which selects the OpenVINO
+eval/runtime device. The runtime/export device name is the OpenVINO `GPU`; the
+training device name is the PyTorch `xpu` — they are not interchangeable.
+
 ## GPU KPI prints `OVER`
 
 Unexpected on typical ultrasound workloads (the pipeline is host-bound, ~12–24%

@@ -247,11 +247,26 @@ If you already have `models/sam256_stockft.pth` and `models/yolov8n_mmotu.pt`
 .\prepare_model.ps1 -Arch sam -Train -Verify
 ```
 
-or run each stage directly for more control:
+Training runs on the **Intel iGPU by default** (`-TrainDevice GPU`, which maps to
+the PyTorch `xpu` device) for both the YOLO detector and the SAM encoder
+fine-tune — the same as DS2Net. To force CPU training, add `-TrainDevice CPU`:
+
+```powershell
+.\prepare_model.ps1 -Arch sam -Train -Verify -TrainDevice CPU
+```
+
+> `-TrainDevice` selects the **training** device and always defaults to `GPU`; it
+> is separate from `-Device`, which selects the OpenVINO **eval/runtime** device.
+> The training device string (`xpu`) is the PyTorch/ultralytics name for the
+> Intel GPU, which is **different** from the OpenVINO runtime/eval name (`GPU`).
+> `xpu` needs a PyTorch build with Intel XPU support in the venv; if it is
+> unavailable, use `-TrainDevice CPU` (slower).
+
+or run each stage directly for more control (swap `xpu` → `cpu` to train on CPU):
 
 ```powershell
 venv\Scripts\python.exe -m backend.bootstrap.sam.prepare_yolo_data --data data\OTU_2d
-venv\Scripts\python.exe -m backend.bootstrap.sam.train_yolo --device cpu
+venv\Scripts\python.exe -m backend.bootstrap.sam.train_yolo --device xpu
 venv\Scripts\python.exe -m backend.bootstrap.sam.finetune_encoder ^
     --weights models\sam_vit_b_01ec64.pth --data data\OTU_2d --device xpu
 venv\Scripts\python.exe -m backend.bootstrap.sam.export_yolo
