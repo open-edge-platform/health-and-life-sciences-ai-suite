@@ -9,6 +9,8 @@ Windows machine with an Intel Core Ultra (Intel Arc iGPU).
 - Up-to-date Intel graphics drivers (the iGPU must appear in Task Manager and be
   visible to OpenVINO).
 - Python 3.11 (64-bit) on `PATH`.
+- [Node.js](https://nodejs.org) 18+ on `PATH` — used once to build the web
+  dashboard UI; the first `run_webapp.ps1` builds it automatically.
 - PowerShell. If scripts are blocked, allow them for the current session only:
 
   ```powershell
@@ -103,16 +105,10 @@ and every graph lights up:
    ```powershell
    .\venv\Scripts\pip install -r webapp\requirements.txt
    ```
-4. **Build the React UI** — the dashboard ships as source, so build it once
-   (needs [Node.js](https://nodejs.org) 18+). This writes `webapp\ui\dist`,
-   which the Flask server serves:
-
-   ```powershell
-   cd webapp\ui
-   npm install
-   npm run build
-   cd ..\..
-   ```
+4. **Node.js on `PATH`** — the browser UI is built from source **automatically**
+   on your first `run_webapp.ps1`, so there is nothing to build by hand; just
+   install [Node.js](https://nodejs.org) 18+. (To pre-build instead, run
+   `cd webapp\ui; npm install; npm run build`.)
 5. **Hardware-utilization tools** — CPU and memory need nothing extra, but the
    iGPU / NPU / power graphs use Intel vendor tools (SoCWatch, Level Zero) that
    are **not** committed (~139 MB). Stage them once by copying a
@@ -127,7 +123,9 @@ Launch:
 .\run_webapp.ps1
 ```
 
-This serves the UI at <http://127.0.0.1:8080> and opens your browser. Then:
+On the **first** launch this builds the browser UI from source (needs Node.js;
+one-time, about a minute), then serves it at <http://127.0.0.1:8080> and opens
+your browser; later launches skip the build. Then:
 
 1. Pick a **Use case** (default *DS2Net Tumor Segmentation*), a **Device**
    (Intel iGPU or CPU), and **Precision** (FP16).

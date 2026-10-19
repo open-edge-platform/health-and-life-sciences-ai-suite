@@ -39,6 +39,33 @@ if (-not (Test-Path $py)) {
     Write-Error "virtual environment not found ($py). Run .\setup.ps1 first (or pass -Venv)."
 }
 
+# Build the React dashboard on first launch so the app is self-contained: the
+# user runs this one command and the browser UI is served. The built bundle
+# (webapp\ui\dist) is git-ignored, so later launches just reuse it.
+$uiDir   = Join-Path $PSScriptRoot "webapp\ui"
+$uiIndex = Join-Path $uiDir "dist\index.html"
+if (-not (Test-Path $uiIndex)) {
+    if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
+        Write-Error ("The web UI is not built yet and Node.js/npm was not found on PATH. " +
+            "Install Node.js 18+ (https://nodejs.org), then re-run .\run_webapp.ps1.")
+    }
+    Write-Host "[run_webapp] building the web UI (first run only; needs Node.js)..."
+    Push-Location $uiDir
+    try {
+        if (-not (Test-Path (Join-Path $uiDir "node_modules"))) {
+            Write-Host "[run_webapp] npm install"
+            & npm install
+            if ($LASTEXITCODE -ne 0) { throw "npm install failed (exit $LASTEXITCODE)" }
+        }
+        Write-Host "[run_webapp] npm run build"
+        & npm run build
+        if ($LASTEXITCODE -ne 0) { throw "npm run build failed (exit $LASTEXITCODE)" }
+    }
+    finally {
+        Pop-Location
+    }
+}
+
 $env:WEBAPP_PORT = "$Port"
 $url = "http://127.0.0.1:$Port"
 

@@ -109,14 +109,15 @@ Prefer a browser UI over the CLI? `run_webapp.ps1` serves a React dashboard —
 device / use-case selection, live inference latency / FPS, the iGPU KPI, and
 CPU / iGPU / NPU / power / memory graphs — on top of the **same** `src/` pipeline
 (the segmentation itself still opens in the OpenCV pop-up). It needs a few extra
-Python packages (Flask + psutil, and pandas for the power graph), plus a one-time
-React UI build (needs [Node.js](https://nodejs.org) 18+):
+Python packages (Flask + psutil, and pandas for the power graph):
 
 ```powershell
 .\venv\Scripts\pip install -r webapp\requirements.txt
-cd webapp\ui; npm install; npm run build; cd ..\..      # build the dashboard (one-time)
 .\run_webapp.ps1                                         # serves http://127.0.0.1:8080
 ```
+
+The first `run_webapp.ps1` builds the React UI automatically (needs
+[Node.js](https://nodejs.org) 18+); later launches reuse the build.
 
 Full setup, including the hardware-utilization graphs, is in
 [Get Started](docs/user-guide/get-started.md#4-run-the-web-dashboard-ui).
