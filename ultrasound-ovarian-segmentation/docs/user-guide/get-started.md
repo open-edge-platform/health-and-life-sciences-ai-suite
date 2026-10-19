@@ -103,7 +103,17 @@ and every graph lights up:
    ```powershell
    .\venv\Scripts\pip install -r webapp\requirements.txt
    ```
-4. **Hardware-utilization tools** — CPU and memory need nothing extra, but the
+4. **Build the React UI** — the dashboard ships as source, so build it once
+   (needs [Node.js](https://nodejs.org) 18+). This writes `webapp\ui\dist`,
+   which the Flask server serves:
+
+   ```powershell
+   cd webapp\ui
+   npm install
+   npm run build
+   cd ..\..
+   ```
+5. **Hardware-utilization tools** — CPU and memory need nothing extra, but the
    iGPU / NPU / power graphs use Intel vendor tools (SoCWatch, Level Zero) that
    are **not** committed (~139 MB). Stage them once by copying a
    `monitoring\tools` folder from your existing benchmark install into this

@@ -109,10 +109,12 @@ Prefer a browser UI over the CLI? `run_webapp.ps1` serves a React dashboard —
 device / use-case selection, live inference latency / FPS, the iGPU KPI, and
 CPU / iGPU / NPU / power / memory graphs — on top of the **same** `src/` pipeline
 (the segmentation itself still opens in the OpenCV pop-up). It needs a few extra
-Python packages (Flask + psutil, and pandas for the power graph):
+Python packages (Flask + psutil, and pandas for the power graph), plus a one-time
+React UI build (needs [Node.js](https://nodejs.org) 18+):
 
 ```powershell
 .\venv\Scripts\pip install -r webapp\requirements.txt
+cd webapp\ui; npm install; npm run build; cd ..\..      # build the dashboard (one-time)
 .\run_webapp.ps1                                         # serves http://127.0.0.1:8080
 ```
 
@@ -190,7 +192,7 @@ ultrasound-ovarian-segmentation/
     bootstrap/sam/          #   SAM: YOLO + encoder/decoder prep + eval
     requirements.txt        #   DS2Net model-prep deps (torch, transformers, ...)
     requirements-sam.txt    #   SAM model-prep deps (+ segment-anything, ultralytics)
-  webapp/                   # web dashboard: Flask control plane + prebuilt React UI
+  webapp/                   # web dashboard: Flask control plane + React UI (npm build)
   monitoring/               # hardware-utilization collectors + governor counter source
   models/                   # produced locally (git-ignored); see models/README.md
   docs/user-guide/          # setup, runtime configuration, troubleshooting

@@ -25,7 +25,8 @@ cache/
 # separately on the target box, not committed. See the web-dashboard guide.
 monitoring/tools/
 
-# Web UI: the prebuilt webapp/ui/dist IS committed so the target needs no
-# npm/Node toolchain; never commit node_modules or Vite's dev cache.
+# Web UI build output: built locally with `npm run build` (see the web-dashboard
+# guide); never commit the dist bundle, node_modules, or Vite's dev cache.
+webapp/ui/dist/
 webapp/ui/node_modules/
 webapp/ui/.vite/
