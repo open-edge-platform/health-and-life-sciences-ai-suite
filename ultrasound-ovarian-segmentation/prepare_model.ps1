@@ -56,8 +56,11 @@ if (-not (Test-Path $py)) {
 # Training always defaults to the Intel iGPU. PyTorch/ultralytics use their own
 # device strings (xpu = Intel GPU) which differ from the OpenVINO runtime/eval
 # names (-Device GPU/CPU/NPU). Map -TrainDevice -> torch string; pass
-# -TrainDevice CPU only to force CPU training.
-$trainDevice = if ($TrainDevice -eq "CPU") { "cpu" } else { "xpu" }
+# -TrainDevice CPU only to force CPU training. NOTE: use a DISTINCT variable name
+# ($torchDevice, not $trainDevice) - PowerShell variable names are case-insensitive,
+# so $trainDevice would alias the ValidateSet-constrained $TrainDevice param and
+# reject the 'xpu'/'cpu' assignment.
+$torchDevice = if ($TrainDevice -eq "CPU") { "cpu" } else { "xpu" }
 
 if ($Arch -eq "sam") {
     # SAM-256 pipeline: three IRs (YOLO@320 bbox, encoder@256, multimask decoder).
@@ -88,12 +91,12 @@ if ($Arch -eq "sam") {
     }
 
     if ($Train) {
-        Write-Host "[prepare] SAM -Train (train device=$TrainDevice -> torch '$trainDevice'): YOLO labels + YOLOv8n train + SAM encoder fine-tune (the long step)"
+        Write-Host "[prepare] SAM -Train (train device=$TrainDevice -> torch '$torchDevice'): YOLO labels + YOLOv8n train + SAM encoder fine-tune (the long step)"
         & $py -m backend.bootstrap.sam.prepare_yolo_data --data $Data
         if ($LASTEXITCODE -ne 0) { Write-Error "prepare_yolo_data failed" }
-        & $py -m backend.bootstrap.sam.train_yolo --device $trainDevice
+        & $py -m backend.bootstrap.sam.train_yolo --device $torchDevice
         if ($LASTEXITCODE -ne 0) { Write-Error "train_yolo failed" }
-        & $py -m backend.bootstrap.sam.finetune_encoder --weights $stockWeights --data $Data --device $trainDevice
+        & $py -m backend.bootstrap.sam.finetune_encoder --weights $stockWeights --data $Data --device $torchDevice
         if ($LASTEXITCODE -ne 0) { Write-Error "finetune_encoder failed" }
     }
 
@@ -156,8 +159,8 @@ if ($SkipInstall -or $haveBackend) {
 }
 
 if ($Train) {
-    Write-Host "[prepare] training SegFormer-B5 on MMOTU-2D (train device=$TrainDevice -> torch '$trainDevice', the long step)"
-    & $py -m backend.bootstrap.train --data $Data --res $Res --device $trainDevice --out $Checkpoint
+    Write-Host "[prepare] training SegFormer-B5 on MMOTU-2D (train device=$TrainDevice -> torch '$torchDevice', the long step)"
+    & $py -m backend.bootstrap.train --data $Data --res $Res --device $torchDevice --out $Checkpoint
     if ($LASTEXITCODE -ne 0) { Write-Error "training failed" }
 }
 
