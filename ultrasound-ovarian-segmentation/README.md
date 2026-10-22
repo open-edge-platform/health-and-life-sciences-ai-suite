@@ -1,4 +1,4 @@
-# Ultrasound Ovarian Segmentation Sample App
+# Ultrasound Ovarian Segmentation Sample Application
 
 > [!NOTE]
 > This application is for **reference and evaluation purposes only**. It is
@@ -6,21 +6,21 @@
 > not validated for such a purpose.
 
 Real-time ovarian tumor segmentation in 2D ultrasound on the Intel iGPU (with a
-CPU fallback) using OpenVINO. The app ships two interchangeable models, selected
+CPU fallback) using OpenVINO. The application ships two interchangeable models, selected
 with `-Arch`: the default **promptless SegFormer-B5 (DS2Net)** — it takes the
 whole frame and outputs a tumor mask, with no bounding-box prompt and no separate
 detector — and an optional **prompted SAM-256** pipeline (YOLOv8n bbox → SAM
-ViT-B encoder → mask decoder). Either way the mask is overlaid on a live pop-up
+ViT-B encoder → mask decoder). Either way, the mask is overlaid on a live pop-up
 window. A built-in **GPU utilization cap** keeps the Intel iGPU under an 80%
 busiest-engine ceiling and records the peak/mean so the KPI can be proven after a
 run.
 
-|   |   |
-|---|---|
+|  |  |
+| --- | --- |
 | **Models** | `ds2net` — promptless SegFormer MiT-B5 (default); `sam` — YOLOv8n bbox → SAM-256. Both fp16 OpenVINO IR |
 | **Accuracy** | DS2Net Dice 0.8657 / IoU 0.7913; SAM Dice 0.8207 / IoU 0.7394 — MMOTU-2D val (res 256) |
 | **Inference** | Pure OpenVINO runtime (no PyTorch at run time) |
-| **Runtime** | Native Windows Python app (PowerShell + venv) |
+| **Runtime** | Native Windows Python application (PowerShell + venv) |
 | **Inputs** | Video file, USB webcam, or a folder of ultrasound stills |
 | **Display** | OpenCV pop-up: original + segmented side-by-side (or `--view overlay`) + FPS / GPU HUD |
 | **GPU cap** | Adaptive governor enforces the iGPU < 80% utilization KPI |
@@ -42,17 +42,18 @@ source (file / webcam / folder)
                                                   if iGPU utilization nears the cap
 ```
 
+> [!NOTE]
 > With `-Arch sam` the inference thread runs the YOLO → SAM encoder → mask-decoder
 > pipeline instead of SegFormer; the capture / inference / display topology is
 > identical.
 
 ## Model Preparation
 
-This app does **not** ship a trained model. It loads its default IR from
+This application does **not** ship a trained model. It loads its default IR from
 `models/ds2net_segformer_b5_256/model.xml`; get one there in any of these ways:
 
 - **Already have a prebuilt IR?** If someone handed you the exported `model.xml`
-  + `model.bin` (for example, copied from another evaluation box), just place the
+  and `model.bin` (for example, copied from another evaluation machine), just place the
   two files under `models\ds2net_segformer_b5_256\` and skip to
   [Quickstart](#quickstart) — no model-prep dependencies, dataset, or training
   needed.
@@ -96,7 +97,7 @@ From this directory, after model preparation:
 A pop-up window opens showing the **original frame alongside the segmented frame**
 (tumor-mask overlay) and a HUD (display/inference FPS, latency, and live iGPU
 utilization); pass `--view overlay` for a single overlaid pane. Press `q` or `Esc`
-to quit, or close the window. On exit the app prints the GPU KPI verdict, for
+to quit, or close the window. On exit the application prints the GPU KPI verdict, for
 example:
 
 ```text
@@ -154,7 +155,7 @@ IRs):
 > notice and uses the GPU (or CPU) instead.
 
 Record an annotated video, or tighten the GPU cap (extra flags after `--` are
-forwarded to the app):
+forwarded to the application):
 
 ```powershell
 .\run.ps1 -Source file -Input clip.mp4 -- --record out.mp4 --gpu-cap 70
@@ -165,12 +166,12 @@ flag and environment variable.
 
 ## GPU Utilization Cap
 
-The app builds a `GpuGovernor` per run (`src/gpu_governor.py`). A background
+The application builds a `GpuGovernor` per run (`src/gpu_governor.py`). A background
 thread samples the Intel iGPU busiest-engine utilization from Windows GPU-Engine
 performance counters; a proportional controller grows a small per-frame delay
 when utilization approaches the target (70%) and hard-kicks it over the cap
 (80%), so sustained iGPU utilization stays under the KPI ceiling. On real
-ultrasound workloads the pipeline is host-bound (~12–24% iGPU), so the throttle
+ultrasound workloads the pipeline is host-bound (utilizing ~12–24% iGPU), so the throttle
 never engages — the cap is a proven safety net, not a bottleneck. The governor
 degrades to a no-op on non-Windows machines (the counter source is unavailable),
 so the code still imports and runs for development.
@@ -179,7 +180,7 @@ so the code still imports and runs for development.
 
 ```text
 ultrasound-ovarian-segmentation/
-  src/                      # runtime app (pure OpenVINO)
+  src/                      # runtime application (pure OpenVINO)
     app.py                  #   capture / inference / display pipeline + CLI
     config.py               #   CLI + env configuration
     segmenters/             #   model arches: base, ds2net, sam, yolo, ov_runner
