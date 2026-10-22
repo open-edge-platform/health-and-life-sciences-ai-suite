@@ -1,4 +1,4 @@
-# Surgical Instrument Sample App
+# Surgical Instrument Sample Application
 
 <!--hide_directive
 ::::{container} component_header_row
