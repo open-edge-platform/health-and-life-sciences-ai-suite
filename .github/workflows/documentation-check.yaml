@@ -20,6 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       multi-modal-patient-monitoring_changed: ${{ steps.filter.outputs.multi-modal-patient-monitoring }}
+      nicu-warmer_changed: ${{ steps.filter.outputs.nicu-warmer }}
+      surgical-instrument_changed: ${{ steps.filter.outputs.surgical-instrument }}
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -32,6 +34,10 @@ jobs:
           filters: |
             multi-modal-patient-monitoring:
               - 'multi_modal_patient_monitoring/docs/user-guide/**'
+            nicu-warmer:
+              - 'NICU-Warmer/docs/user-guide/**'
+            surgical-instrument:
+              - 'surgical-instrument/docs/user-guide/**'
 
   build-multi-modal-patient-monitoring:
     permissions:
@@ -41,3 +47,21 @@ jobs:
     uses: ./.github/workflows/docs-reusable-workflow.yaml
     with:
       docs_directory: multi_modal_patient_monitoring
+
+  build-nicu-warmer:
+    permissions:
+      contents: read # needed for actions/checkout
+    needs: filter
+    if: ${{ needs.filter.outputs.nicu-warmer_changed == 'true' }}
+    uses: ./.github/workflows/docs-reusable-workflow.yaml
+    with:
+      docs_directory: NICU-Warmer
+
+  build-surgical-instrument:
+    permissions:
+      contents: read # needed for actions/checkout
+    needs: filter
+    if: ${{ needs.filter.outputs.surgical-instrument_changed == 'true' }}
+    uses: ./.github/workflows/docs-reusable-workflow.yaml
+    with:
+      docs_directory: surgical-instrument
