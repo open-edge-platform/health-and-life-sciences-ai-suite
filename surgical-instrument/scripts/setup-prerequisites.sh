@@ -143,6 +143,12 @@ fi
 # --------------------------------------------------------- base tools -------
 
 log "Base tools"
+# Refresh the package index before the very first install. Without this, a host
+# with a stale apt cache can resolve a since-superseded package version and fail
+# with a 404 "Unable to fetch some archives" (e.g. a point-release bump of
+# libexpat1-dev). The APT_UPDATED latch keeps this to a single update; the
+# Docker/Intel sections below reset it when they add their own source lists.
+apt_update_once
 apt_install \
   ca-certificates curl gnupg wget \
   git make tar \
