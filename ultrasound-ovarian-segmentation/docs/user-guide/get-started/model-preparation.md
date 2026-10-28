@@ -65,7 +65,7 @@ This installs the model preparation dependencies, exports the checkpoint to an f
 OpenVINO™ IR at `models/ds2net_segformer_b5_256`, and scores Dice/IoU on the validation
 split. Skip to [Verify the result](#verify-the-result).
 
-## Option B: train from scratch
+## Option B: fine-tune SegFormer-B5 on MMOTU-2D
 
 ### 1. Dataset for DS2Net
 
