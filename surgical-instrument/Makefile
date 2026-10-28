@@ -237,8 +237,8 @@ backend-venv: $(BACKEND_VENV)/bin/python ## Create .venv-backend with torch+xpu,
 	  torch==2.7.1 torchvision==0.22.1
 	@echo '[backend-venv] installing backend/requirements.txt'
 	@$(PIP) install -r backend/requirements.txt
-	@echo '[backend-venv] verifying torch.xpu is available'
-	@$(PYVENV) -c 'import torch; assert torch.xpu.is_available(), "torch.xpu not available; check L0 stack + /dev/dri"; print("[backend-venv] torch", torch.__version__, "xpu OK on", torch.xpu.get_device_name(0))'
+	@echo '[backend-venv] verifying torch.xpu is available (non-fatal)'
+	@$(PYVENV) -c 'import torch; a = torch.xpu.is_available(); print("[backend-venv] torch", torch.__version__, "xpu OK on", torch.xpu.get_device_name(0)) if a else print("[backend-venv] WARNING: torch.xpu not visible yet. If setup-prerequisites just added you to the render/video groups, that membership only applies in a NEW login session. Fix: log out/in (or run: newgrp render), then re-check with: make check-l0 / make doctor. The venv is ready; this check is non-fatal.")' || true
 
 .PHONY: backend-bootstrap
 backend-bootstrap: ## Fetch dataset, train YOLO11n, export FP16 OpenVINO IR (cache-first)
