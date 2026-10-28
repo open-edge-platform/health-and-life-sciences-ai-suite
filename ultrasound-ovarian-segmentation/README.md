@@ -5,9 +5,9 @@
 > **not intended for direct use in clinical or diagnostic environments** and is
 > not validated for such a purpose.
 
-Real-time ovarian tumor segmentation in 2D ultrasound on the Intel iGPU (with a
-CPU fallback) using OpenVINO. The application ships two interchangeable models, selected
-with `-Arch`: the default **promptless SegFormer-B5 (DS2Net)** — it takes the
+Real-time ovarian tumor segmentation in 2D ultrasound on Intel iGPU (with a
+CPU fallback) using the OpenVINO™ Toolkit. The application ships two interchangeable models,
+selected with `-Arch`: the default **promptless SegFormer-B5 (DS2Net)** — it takes the
 whole frame and outputs a tumor mask, with no bounding-box prompt and no separate
 detector — and an optional **prompted SAM-256** pipeline (YOLOv8n bbox → SAM
 ViT-B encoder → mask decoder). Either way, the mask is overlaid on a live pop-up
@@ -15,11 +15,11 @@ window. A built-in **GPU utilization cap** keeps the Intel iGPU under an 80%
 busiest-engine ceiling and records the peak/mean so the KPI can be proven after a
 run.
 
-|  |  |
+| Feature | Description |
 | --- | --- |
-| **Models** | `ds2net` — promptless SegFormer MiT-B5 (default); `sam` — YOLOv8n bbox → SAM-256. Both fp16 OpenVINO IR |
+| **Models** | `ds2net` — promptless SegFormer MiT-B5 (default); `sam` — YOLOv8n bbox → SAM-256. Both fp16 OpenVINO™ IR |
 | **Accuracy** | DS2Net Dice 0.8657 / IoU 0.7913; SAM Dice 0.8207 / IoU 0.7394 — MMOTU-2D val (res 256) |
-| **Inference** | Pure OpenVINO runtime (no PyTorch at run time) |
+| **Inference** | Pure OpenVINO™ runtime (no PyTorch at run time) |
 | **Runtime** | Native Windows Python application (PowerShell + venv) |
 | **Inputs** | Video file, USB webcam, or a folder of ultrasound stills |
 | **Display** | OpenCV pop-up: original + segmented side-by-side (or `--view overlay`) + FPS / GPU HUD |
@@ -28,7 +28,7 @@ run.
 ## Topology
 
 Decoupled capture / inference / display threads, so the displayed video stays
-smooth regardless of inference speed.
+smooth regardless of inference speed:
 
 ```text
 source (file / webcam / folder)
@@ -47,10 +47,11 @@ source (file / webcam / folder)
 > pipeline instead of SegFormer; the capture / inference / display topology is
 > identical.
 
-## Model Preparation
+## Model preparation
 
-This application does **not** ship a trained model. It loads its default IR from
-`models/ds2net_segformer_b5_256/model.xml`; get one there in any of these ways:
+This application does **not** ship a trained model. It loads its default Intermediate
+Representation (IR) from `models/ds2net_segformer_b5_256/model.xml`; get one there in any of
+these ways:
 
 - **Already have a prebuilt IR?** If someone handed you the exported `model.xml`
   and `model.bin` (for example, copied from another evaluation machine), just place the
@@ -65,7 +66,7 @@ This application does **not** ship a trained model. It loads its default IR from
   .\prepare_model.ps1 -Verify     # export checkpoint -> fp16 IR, then verify Dice
   ```
 
-- **Train from scratch** — download the MMOTU-2D dataset and the MiT-B5 backbone,
+- **Fine-tune SegFormer-B5 on MMOTU-2D** — download the MMOTU-2D dataset and the MiT-B5 backbone,
   then train on the Intel iGPU before exporting:
 
   ```powershell
@@ -104,7 +105,7 @@ example:
 GPU KPI (< 80%): PASS — peak busiest-engine 17.8% mean 11.5% (samples=900, throttle_engaged=False)
 ```
 
-## Web Dashboard (UI)
+## Web dashboard (UI)
 
 Prefer a browser UI over the CLI? `run_webapp.ps1` serves a React dashboard —
 device / use-case selection, live inference latency / FPS, the iGPU KPI, and
@@ -123,7 +124,7 @@ The first `run_webapp.ps1` builds the React UI automatically (needs
 Full setup, including the hardware-utilization graphs, is in
 [Get Started](docs/user-guide/get-started.md#4-run-the-web-dashboard-ui).
 
-## Common Commands
+## Common commands
 
 Run against a folder of ultrasound stills (paced like a slideshow):
 
@@ -150,9 +151,10 @@ IRs):
 .\run.ps1 -Arch sam -Source file -Input C:\path\to\clip.mp4 -Device GPU
 ```
 
+> [!NOTE]
 > Both models target the Intel iGPU (`-Device GPU`); `CPU` is a development /
-> sanity fallback. The **NPU is not supported** — passing `-Device NPU` logs a
-> notice and uses the GPU (or CPU) instead.
+  sanity fallback. The **NPU is not supported** — passing `-Device NPU` logs a
+  notice and uses the GPU (or CPU) instead.
 
 Record an annotated video, or tighten the GPU cap (extra flags after `--` are
 forwarded to the application):
@@ -164,17 +166,18 @@ forwarded to the application):
 See [Runtime Configuration](docs/user-guide/runtime-configuration.md) for every
 flag and environment variable.
 
-## GPU Utilization Cap
+## GPU utilization cap
 
-The application builds a `GpuGovernor` per run (`src/gpu_governor.py`). A background
-thread samples the Intel iGPU busiest-engine utilization from Windows GPU-Engine
-performance counters; a proportional controller grows a small per-frame delay
-when utilization approaches the target (70%) and hard-kicks it over the cap
-(80%), so sustained iGPU utilization stays under the KPI ceiling. On real
-ultrasound workloads the pipeline is host-bound (utilizing ~12–24% iGPU), so the throttle
-never engages — the cap is a proven safety net, not a bottleneck. The governor
-degrades to a no-op on non-Windows machines (the counter source is unavailable),
-so the code still imports and runs for development.
+The application creates a `GpuGovernor` for each run (src/gpu_governor.py) to keep Intel iGPU
+utilization below the defined limit. A background thread monitors the busiest GPU engine using
+Windows GPU-Engine performance counters. When utilization approaches the 70% target, the
+governor gradually adds a small delay between frames. If utilization exceeds the 80% cap, it
+applies more aggressive throttling. When running ovarian tumor segmentation using the MMOTU-2D
+sample dataset, iGPU utilization is typically only ~12–24%, so the governor does not engage.
+The 80% cap therefore acts as a safety mechanism for heavier workloads that drive higher GPU
+utilization, rather than a performance bottleneck. On non-Windows systems, GPU counters are
+not available, so monitoring and throttling are disabled; the application can still run for
+development and testing.
 
 ## Project Layout
 
