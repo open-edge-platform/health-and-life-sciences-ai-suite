@@ -155,6 +155,7 @@ make up MODELS_DIR=/path/to/models VIDEOS_DIR=/path/to/videos SERIAL=<SERIAL_NUM
 ```text
 surgical-instrument/
 ├── Makefile
+├── sources.Dockerfile             # source-build image (REGISTRY=false / make build)
 ├── backend/                       # optional local training + OpenVINO export
 │   ├── bootstrap/                 # dataset auto-detect, train, export
 │   ├── config/model.yaml          # training + dataset config (env-var expanded)
@@ -164,20 +165,24 @@ surgical-instrument/
 │   └── REAL-Colon/helper/         # vendor full-corpus downloader (60 studies)
 ├── docker/
 │   ├── Dockerfile
-│   └── docker-compose.yaml
+│   ├── docker-compose.yaml
+│   └── docker-compose.npu.yaml    # NPU device overlay (DEVICE=NPU)
 ├── docs/
-│   ├── index.md
-│   ├── get-started.md
-│   ├── get-started/
-│   │   ├── system-requirements.md
-│   │   └── model-preparation.md
-│   ├── runtime-configuration.md
-│   ├── troubleshooting.md
-│   └── release-notes.md
+│   └── user-guide/
+│       ├── index.md
+│       ├── get-started.md
+│       ├── get-started/
+│       │   ├── system-requirements.md
+│       │   └── model-preparation.md
+│       ├── runtime-configuration.md
+│       ├── troubleshooting.md
+│       └── release-notes.md
 ├── scripts/
 │   ├── setup-prerequisites.sh        # host prerequisite installer (Docker + Intel L0)
-│   ├── download_realcolon_subset.sh  # REAL-Colon 7-study subset downloader (~74 GB)
-│   └── create_endoscopy_video.py
+│   ├── download_realcolon_subset.sh  # REAL-Colon subset downloader
+│   ├── realcolon_prepare_yolo.py     # build a small video-level-split YOLO dataset
+│   └── create_endoscopy_video.py     # stitch REAL-Colon frames into a demo video
+├── thirdparty/                    # third-party apt dependency manifests
 └── src/
     ├── app.py
     ├── config.py
@@ -185,5 +190,6 @@ surgical-instrument/
     ├── display.py
     ├── sources.py
     ├── utility.py
+    ├── vsync.py
     └── requirements.txt
 ```
