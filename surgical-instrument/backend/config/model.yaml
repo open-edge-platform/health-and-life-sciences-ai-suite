@@ -83,7 +83,7 @@ train:
   close_mosaic: 10
   patience: 0            # disable early-stop — deterministic full-epoch runs
   save_period: 10
-  amp: true             # XPU + Ultralytics check_amp incompatibility
+  amp: false            # XPU: skip Ultralytics check_amp (its probe forward pass raises a PyTorch-XPU UR error and aborts training). FP32 training; the FP16 IR is still produced via export.half below.
 
 export:
   format: openvino
