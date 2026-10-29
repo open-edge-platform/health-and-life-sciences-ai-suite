@@ -42,14 +42,10 @@ services:
     network_mode: "host"
     
   metrics-collector:
-    # Live-metrics HTTP API (CPU/GPU/NPU/memory/power on :9000) now lives upstream
-    # in intel-retail/performance-tools (live-metrics/), so we consume that image
-    # instead of building and maintaining our own. It is not on Docker Hub yet --
-    # build it locally from the performance-tools repo: from its docker/ folder run
-    # `log_dir=./results docker compose build`, which produces `benchmark:latest`.
-    # TODO(ITEP-97756): switch to the published intel/retail-benchmark:<tag> once
-    # Sumana pushes it, so end users just pull instead of building.
-    image: benchmark:latest
+    # Live-metrics HTTP API (CPU/GPU/NPU/memory/power on :9000) lives upstream in
+    # intel-retail/performance-tools and is published as intel/retail-benchmark,
+    # so we consume that image directly -- no local build required.
+    image: intel/retail-benchmark:latest
     container_name: metrics-collector
     privileged: true
     pid: host
