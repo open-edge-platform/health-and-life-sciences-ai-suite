@@ -127,12 +127,20 @@ up: _xhost ## Start stack for all variations (SOURCE=file|camera|webcam, REGISTR
 	if [ "$$SRC" = "camera" ]; then SRC="basler"; ARG="$(SERIAL)"; fi; \
 	if [ "$$SRC" = "webcam" ]; then SRC="v4l2"; ARG="$(DEVICE_INDEX)"; fi; \
 	CAMERA_TRIGGER="$(CAMERA_TRIGGER)"; \
+	UP_FLAGS="-d"; \
 	if [ "$(REGISTRY_LOWER)" = "true" ]; then \
 		echo "Pulling image from registry: $(REGISTRY_URL)hls-si-endoscopy:$(TAG)"; \
-		DOCKER_REGISTRY=$(REGISTRY_URL) TAG=$(TAG) $(COMPOSE) pull; \
+		if ! DOCKER_REGISTRY=$(REGISTRY_URL) TAG=$(TAG) $(COMPOSE) pull; then \
+			echo "error: REGISTRY=true but pull of $(REGISTRY_URL)hls-si-endoscopy:$(TAG) failed - image/tag unavailable. Refusing to fall back to a local build. Provide a valid TAG present in the registry, or re-run with REGISTRY=false to build locally." >&2; \
+			exit 1; \
+		fi; \
+		UP_FLAGS="$$UP_FLAGS --no-build"; \
 	else \
 		echo "Building image from local source"; \
-		TAG=$(TAG) $(COMPOSE) build; \
+		if ! TAG=$(TAG) $(COMPOSE) build; then \
+			echo "error: local image build failed." >&2; \
+			exit 1; \
+		fi; \
 	fi; \
 	DOCKER_REGISTRY=$(REGISTRY_URL) TAG=$(TAG) \
 	SOURCE="$$SRC" SOURCE_ARG="$$ARG" CAMERA_TRIGGER="$$CAMERA_TRIGGER" \
@@ -142,7 +150,7 @@ up: _xhost ## Start stack for all variations (SOURCE=file|camera|webcam, REGISTR
 	CPU_CAPTURE="$(CPU_CAPTURE)" CPU_INFERENCE="$(CPU_INFERENCE)" \
 	CPU_DISPLAY="$(CPU_DISPLAY)" RT_PRIORITY="$(RT_PRIORITY)" \
 	DEVICE="$(DEVICE)" \
-	$(COMPOSE) up -d
+	$(COMPOSE) up $$UP_FLAGS
 
 .PHONY: down
 down: ## Stop compose stack
