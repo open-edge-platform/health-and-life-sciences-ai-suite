@@ -1,5 +1,6 @@
 # Core dependencies
-openvino>=2024.6.0,<2025.0
+# NVL-S: OpenVINO 2024.6.0 segfaults at ov.Core() on Nova Lake; >=2025.2 required (ITEP-95215/95216).
+openvino>=2025.2.0
 opencv-python-headless>=4.8.0
 numpy>=1.23.0,<2.0
 scipy>=1.10.0

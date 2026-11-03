@@ -19,6 +19,7 @@ onnxscript==0.2.5
 PyYAML==6.0.2
 
 # OpenVINO (model conversion)
-openvino==2024.6.0
+# NVL-S: OpenVINO 2024.6.0 segfaults at ov.Core() on Nova Lake; >=2025.2 required (ITEP-95215/95216).
+openvino>=2025.2.0
 
 

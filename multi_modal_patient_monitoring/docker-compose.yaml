@@ -113,7 +113,7 @@ services:
       context: ./services/ai-ecg/backend
       dockerfile: Dockerfile
       args:
-        INSTALL_DRIVER_VERSION: "25.31.34666"
+        INSTALL_DRIVER_VERSION: "26.27.39122"
         HTTP_PROXY: ${HTTP_PROXY}
         HTTPS_PROXY: ${HTTPS_PROXY}
         NO_PROXY: ${NO_PROXY}
@@ -145,7 +145,7 @@ services:
           HTTP_PROXY: ${HTTP_PROXY}
           HTTPS_PROXY: ${HTTPS_PROXY}
           NO_PROXY: ${NO_PROXY}
-          INSTALL_DRIVER_VERSION: "25.31.34666"
+          INSTALL_DRIVER_VERSION: "26.27.39122"
       image: intel/hl-ai-3dpose:${TAG}
       container_name: 3dpose-estimation
       network_mode: "host"
