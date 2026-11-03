@@ -85,14 +85,22 @@ def build_encoder(weights: Path, enc_res: int, allow_random: bool) -> nn.Module:
             enc_state["pos_embed"] = pe4d.permute(0, 2, 3, 1).contiguous()
             print(f"[export-enc] pos_embed interpolated {pe.shape[1]}x{pe.shape[1]} -> {dst_n}x{dst_n}")
 
-    target_rel_len = 2 * (enc_res // 16) - 1
+    # Each attention block sizes its rel_pos tables from its OWN attention span:
+    # window blocks use 2*window_size-1 (=27 @ window_size=14), while only the
+    # global-attention blocks scale with the image grid, 2*(enc_res//16)-1 (=31 @256).
+    # Interpolate every table to the model's per-key length so the window blocks are
+    # preserved instead of force-fit to the global length -- the latter leaves the 8
+    # window blocks at 31 and makes encoder.load_state_dict() raise a size mismatch
+    # (e.g. blocks.10.attn.rel_pos_h: [31,64] vs [27,64]).
+    enc_target = encoder.state_dict()
     for _k, _v in list(enc_state.items()):
         if not (_k.endswith(".attn.rel_pos_h") or _k.endswith(".attn.rel_pos_w")):
             continue
-        if _v.shape[0] == target_rel_len:
+        want = enc_target[_k].shape[0] if _k in enc_target else _v.shape[0]
+        if _v.shape[0] == want:
             continue
         _v3d = _v.unsqueeze(0).permute(0, 2, 1)
-        _v3d = torch.nn.functional.interpolate(_v3d, size=target_rel_len, mode="linear", align_corners=False)
+        _v3d = torch.nn.functional.interpolate(_v3d, size=want, mode="linear", align_corners=False)
         enc_state[_k] = _v3d.permute(0, 2, 1).squeeze(0).contiguous()
 
     missing, unexpected = encoder.load_state_dict(enc_state, strict=False)
