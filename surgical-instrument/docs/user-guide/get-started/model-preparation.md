@@ -45,10 +45,10 @@ Log out and back in (or reboot) if `make setup-prerequisites` newly added your u
 
 The application is validated on **REAL-Colon** (Cosmo Intelligent Medical
 Devices, figshare article `22202866`). The full corpus is 60 studies (~880 GB).
-The training subset we use is 4 studies (~67 GB).
+The training subset we use is 4 studies (~35 GB download, ~70 GB on disk).
 
 ```bash
-make download-dataset    # 4 studies, ~67 GB, to datasets/REAL-Colon/raw/
+make download-dataset    # 4 studies, ~35 GB download / ~70 GB on disk, to datasets/REAL-Colon/raw/
 
 make prepare-dataset MAX_POS_PER_VIDEO=800 # take maximum 800 positive frames per video
 

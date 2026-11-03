@@ -51,7 +51,7 @@ demo video at `videos/polyp_test.mp4`. Two ways to get there:
 make setup-prerequisites                      # install Docker + Intel L0 stack (Ubuntu 24.04)
 make check-l0                   # verify host GPU stack
 make backend-venv               # create .venv-backend (torch+xpu, Ultralytics, OpenVINO)
-make download-dataset  # 7-study REAL-Colon subset (~45 GB) from figshare 22202866
+make download-dataset  # 4-study REAL-Colon subset (~35 GB download, ~70 GB on disk) from figshare 22202866
 make prepare-dataset MAX_POS_PER_VIDEO=800 # take maximum 800 positive frames per video
 make backend-bootstrap          # dataset -> train -> FP16 OpenVINO IR (cache-first)
 ```

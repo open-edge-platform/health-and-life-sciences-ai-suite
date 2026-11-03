@@ -13,7 +13,7 @@
 #
 #   make setup-prerequisites                 # install host prerequisites (Docker + Intel L0 stack)
 #   make check-l0              # verify Intel Level Zero packages on the host
-#   make download-dataset      # fetch REAL-Colon subset (~74 GB) for training
+#   make download-dataset      # fetch REAL-Colon 4-study subset (~35 GB download, ~70 GB on disk)
 #   make backend-venv          # create .venv-backend with torch+xpu + Ultralytics + OpenVINO
 #   make prepare-dataset       # (optional) small video-level-split dataset for fast training
 #   make backend-bootstrap     # fetch dataset -> train YOLO11n -> export FP16 OpenVINO IR
@@ -195,7 +195,7 @@ setup-prerequisites: ## Install host prerequisites (Docker, Intel L0 stack) — 
 	@./scripts/setup-prerequisites.sh $(SETUP_ARGS)
 
 .PHONY: download-dataset
-download-dataset: ## Download the REAL-Colon subset (~74 GB) into datasets/REAL-Colon/raw
+download-dataset: ## Download the REAL-Colon 4-study subset (~35 GB download, ~70 GB on disk) into datasets/REAL-Colon/raw
 	@./scripts/download_realcolon_subset.sh $(DATASET_DIR)
 
 # Cap positives per video and split BY VIDEO for a fast, leakage-free dataset.

@@ -1,7 +1,8 @@
 #!/bin/bash
-# Download a small subset of the REAL-Colon dataset (7 of 60 studies, ~74 GB)
-# from the public figshare article. Enough to train and validate the
-# Surgical Instrument app without pulling the full ~880 GB corpus.
+# Download a small subset of the REAL-Colon dataset (4 of 60 studies; ~35 GB
+# compressed download, ~70 GB once extracted) from the public figshare article.
+# Enough to train and validate the Surgical Instrument app without pulling the
+# full ~880 GB corpus.
 #
 # Dataset home: https://github.com/cosmoimd/real-colon-dataset
 # Figshare article: https://figshare.com/articles/dataset/REAL-Colon_dataset/22202866
@@ -15,7 +16,7 @@ set -euo pipefail
 DIR="${1:-datasets/REAL-Colon/raw}"
 mkdir -p "$DIR"
 
-# 7 studies (~74 GB total). Adjust this list if you want more or fewer.
+# 4 studies (~35 GB download, ~70 GB extracted). Adjust this list if you want more or fewer.
 STUDIES=(
   "001-001"
   "001-005"
