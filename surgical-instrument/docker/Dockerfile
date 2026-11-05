@@ -33,10 +33,15 @@ USER root
 # Do NOT reinstall openvino/numpy — they come from the base image and must not
 # be overridden (that version mismatch is what broke the GPU path).
 #
-# Strip the base image's Intel apt source first: it points at apt.repos.intel.com,
-# which our proxy can't reach (NO_PROXY covers .intel.com -> direct connect times
-# out). We only pull these libs from Ubuntu's repos, so dropping it is safe.
-RUN find /etc/apt -name '*.list' -o -name '*.sources' | xargs -r grep -lE 'intel\.com' 2>/dev/null | xargs -r rm -f \
+# Strip any apt source that points at apt.repos.intel.com first: NO_PROXY covers
+# .intel.com, so apt would try a direct connection and time out behind the
+# corporate proxy. We only pull these libs from Ubuntu's repos, so dropping it is
+# safe. As of the 2026.3.0-ubuntu24 base the Intel graphics packages come from the
+# kobuk-team launchpad PPA (ppa.launchpadcontent.net), which IS proxy-reachable,
+# so this usually removes nothing -- the loop + `|| true` just keeps the build
+# green when no source matches (a bare `grep | xargs` pipeline exits non-zero and,
+# under `set -o pipefail`, would fail the build).
+RUN for f in $(grep -rlE 'apt\.repos\.intel\.com' /etc/apt 2>/dev/null || true); do rm -f "$f"; done \
     && apt-get update && apt-get install -y --no-install-recommends \
         libgl1 libglib2.0-0 libusb-1.0-0 libsm6 libice6 \
         libglfw3 libglx-mesa0 libgl1-mesa-dri libopengl0 libglx0 libglvnd0 \
