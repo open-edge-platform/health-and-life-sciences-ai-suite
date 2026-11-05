@@ -1,6 +1,6 @@
 # Third-party Debian packages requiring GPL source redistribution
 # Format: package_name=version
-# Base image: intel/hls-si-endoscopy (FROM intel/dlstreamer-pipeline-server:2026.1.0-ubuntu24)
+# Base image: intel/hls-si-endoscopy (FROM intel/dlstreamer-pipeline-server:2026.3.0-ubuntu24-rc1)
 #
 adduser=3.137ubuntu1
 apt=2.8.3
@@ -69,7 +69,7 @@ gzip=1.12-1ubuntu3.1
 hostname=3.23+nmu2ubuntu2
 i965-va-driver=2.4.1+dfsg1-1ubuntu0.1
 init-system-helpers=1.66ubuntu1
-intel-dlstreamer=2026.1.0
+intel-dlstreamer=2026.3.0
 intel-driver-compiler-npu=1.32.1.20260422-24767473183~ubuntu24.04
 intel-fw-npu=1.32.1.20260422-24767473183~ubuntu24.04
 intel-gsc=0.9.5-1~24.04~ppa2

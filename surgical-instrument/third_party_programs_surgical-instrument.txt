@@ -6,7 +6,7 @@ The third party programs and their corresponding required notices and/or license
 terms are listed below.
 
 Image: surgical-instrument/docker/Dockerfile
-Base image (intel/dlstreamer-pipeline-server:2026.1.0-ubuntu24) is pulled from Intel Registry and is NOT redistributed.
+Base image (intel/dlstreamer-pipeline-server:2026.3.0-ubuntu24-rc1) is pulled from Intel Registry and is NOT redistributed.
 
 -------------------------------------------------------------
 1. Software released under the Apache License 2.0
