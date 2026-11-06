@@ -123,7 +123,7 @@ make show-cores     # prints P-core / E-core CPU sets  -> use with CPU_CAPTURE/C
 ### 2a. Pull the image from the registry (default)
 
 `REGISTRY=true` is the default. `make up` pulls the prebuilt image at `TAG`
-(default `latest`) from `REGISTRY_URL` and starts it with the current runtime
+(default `2026.3.0-rc1`) from `REGISTRY_URL` and starts it with the current runtime
 knobs applied through Docker Compose.
 
 ```bash

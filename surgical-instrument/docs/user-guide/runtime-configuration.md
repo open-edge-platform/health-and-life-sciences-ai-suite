@@ -82,7 +82,7 @@ make up SERIAL=<SERIAL_NUMBER> DEVICE=NPU   # requires /dev/accel on the host
 |---|---|---|
 | `REGISTRY` | `true` | `true` pulls the image from `REGISTRY_URL`. `false` builds locally from `docker/Dockerfile`. |
 | `REGISTRY_URL` | `intel/` | Prefix used to resolve the pulled image. |
-| `TAG` | `latest` | Image tag. |
+| `TAG` | `2026.3.0-rc1` | Image tag. |
 
 ## Core pinning + real-time priority
 
