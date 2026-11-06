@@ -45,7 +45,7 @@ services:
     # Live-metrics HTTP API (CPU/GPU/NPU/memory/power on :9000) lives upstream in
     # intel-retail/performance-tools and is published as intel/retail-benchmark,
     # so we consume that image directly -- no local build required.
-    image: intel/retail-benchmark:latest
+    image: intel/retail-benchmark:${TAG}
     container_name: metrics-collector
     privileged: true
     pid: host

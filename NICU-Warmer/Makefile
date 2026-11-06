@@ -3,7 +3,7 @@
 # Default device profile (mixed-optimized: detection=GPU, rPPG=CPU, action=NPU)
 DEVICE_ENV ?= configs/res/mixed-optimized.env
 REGISTRY ?= true
-TAG ?= latest
+TAG ?= 2026.3.0-rc1
 export TAG
 
 RPPG_CONVERTER_IMAGE ?= nicu-rppg-converter:local

@@ -18,7 +18,7 @@ rppg:
       target_dir: /models/rppg
       model_file: mtts_can.hdf5
       video_dir: /videos/rppg
-      video_url: https://videos.pexels.com/video-files/6010959/6010959-hd_1920_1080_25fps.mp4
+      video_url: https://videos.pexels.com/video-files/6010959/6010959-uhd_3840_2160_25fps.mp4
 
 pose-3d:
   models:
@@ -29,7 +29,7 @@ pose-3d:
       target_dir: /models/3d-pose
       ir_file: human-pose-estimation-3d-0001.xml
       video_dir: /videos/3d-pose
-      video_url: https://videos.pexels.com/video-files/7089372/7089372-hd_1920_1080_25fps.mp4
+      video_url: https://videos.pexels.com/video-files/7089372/7089372-uhd_3840_2160_25fps.mp4
       
 
 
