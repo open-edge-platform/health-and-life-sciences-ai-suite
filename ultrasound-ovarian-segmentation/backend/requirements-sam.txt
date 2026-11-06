@@ -13,6 +13,10 @@
 #                                 app loads the exported OpenVINO IR and never imports
 #                                 ultralytics. See backend/bootstrap/sam/train_yolo.py.
 torch>=2.1
+# torch.onnx.export (encoder/decoder -> ONNX -> OpenVINO IR) imports onnxscript
+# eagerly on torch>=2.5; without it the export step fails with
+# ModuleNotFoundError: No module named 'onnxscript'. Pulls in onnx transitively.
+onnxscript>=0.1
 numpy>=1.26,<3
 opencv-python>=4.8
 openvino==2026.2.0

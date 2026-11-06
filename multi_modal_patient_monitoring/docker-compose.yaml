@@ -42,22 +42,19 @@ services:
     network_mode: "host"
     
   metrics-collector:
-    build:
-      context: ./services/metrics-collector
-      dockerfile: Dockerfile
-      args:
-        HTTP_PROXY: ${HTTP_PROXY}
-        HTTPS_PROXY: ${HTTPS_PROXY}
-        NO_PROXY: ${NO_PROXY}
-    image: intel/hl-ai-metrics-collector:${TAG}
+    # Live-metrics HTTP API (CPU/GPU/NPU/memory/power on :9000) lives upstream in
+    # intel-retail/performance-tools and is published as intel/retail-benchmark,
+    # so we consume that image directly -- no local build required.
+    image: intel/retail-benchmark:latest
     container_name: metrics-collector
     privileged: true
     pid: host
     network_mode: "host"
     environment:
       - NPU_LOG=/tmp/results/npu_usage.csv
-      - METRICS_DIR=/tmp/results
-      - DEVICE_ENV_PATH=/configs/device.env
+      - RESULTS_DIR=/tmp/results                # live-metrics reads here (was METRICS_DIR)
+      - DEVICE_CONFIG_PATH=/configs/device.env  # powers GET /device-config (was DEVICE_ENV_PATH)
+      - QMASSA_CYCLE_SECONDS=180                # bound the qmassa JSON (replaces the custom collect_gpu.sh)
     volumes:
       - ./metrics:/tmp/results
       - ./configs:/configs
@@ -65,7 +62,7 @@ services:
       - /sys/devices:/sys/devices
       - /dev/dri:/dev/dri:rw
       - /sys/class/drm:/sys/class/drm:ro
-      - /sys/kernel/debug:/sys/kernel/debug:ro    
+      - /sys/kernel/debug:/sys/kernel/debug:ro
       - /proc:/proc
 
   mdpnp:
