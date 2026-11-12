@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import json
 import logging
+import sys
 from collections import deque
 from pathlib import Path
 from typing import Any
@@ -35,6 +36,18 @@ import numpy as np
 
 logger = logging.getLogger("ActionCallback")
 logger.setLevel(logging.INFO)
+
+_OPENVINO_PYTHON_DIR = "/opt/intel/openvino_genai/python"
+
+
+def _import_openvino() -> Any:
+    try:
+        import openvino as ov
+    except ImportError:
+        # DLSPS 2026.3+ ships OpenVINO Python outside the default PYTHONPATH.
+        sys.path.append(_OPENVINO_PYTHON_DIR)
+        import openvino as ov
+    return ov
 
 # Encoder expects 224x224 BGR, normalised to [0,1]
 ENCODER_SIZE = 224
@@ -452,7 +465,7 @@ class ActionCallback:
     def _load_models(self) -> None:
         if self._encoder is not None:
             return
-        import openvino as ov
+        ov = _import_openvino()
 
         core = ov.Core()
         try:
