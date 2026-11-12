@@ -105,7 +105,7 @@ Start all services (default mixed-optimized device profile):
 make run
 ```
 
-By default, `make run` pulls the prebuilt images from Docker Hub.
+By default, `make run` pulls the prebuilt images from Docker Hub with `TAG=latest`.
 
 To build the images locally instead:
 
@@ -113,10 +113,10 @@ To build the images locally instead:
 make run REGISTRY=false
 ```
 
-To pull a specific release tag:
+To explicitly select the default `latest` tag:
 
 ```bash
-make run TAG=2026.3.0-rc1
+make run TAG=latest
 ```
 
 This pulls and starts 5 containers:

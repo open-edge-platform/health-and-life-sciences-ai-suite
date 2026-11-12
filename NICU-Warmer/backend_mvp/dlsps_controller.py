@@ -181,10 +181,12 @@ class DLSPSController:
 
                 if person_model and patient_model and latch_model:
                     # Build optimized detect properties from resolved device settings
-                    detect_props_base: dict[str, str] = {"device": detect_device}
+                    detect_props_base: dict[str, str | int] = {"device": detect_device}
                     detect_opts = resolved["detect"].get("inference_options", "")
-                    if detect_opts:
-                        detect_props_base["ie-config"] = detect_opts.replace("ie-config=", "")
+                    for option in detect_opts.split():
+                        key, separator, value = option.partition("=")
+                        if separator and value:
+                            detect_props_base[key] = int(value) if key == "nireq" else value
 
                     payload["parameters"] = {
                         "person-detect-properties": {

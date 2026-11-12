@@ -1,5 +1,8 @@
+import json
 import time
 from pathlib import Path
+
+import pytest
 
 from backend_mvp.app import create_app
 from backend_mvp.dlsps_controller import DLSPSController, DLSPSControllerConfig
@@ -91,6 +94,31 @@ def test_dlsps_controller_start_status_stop(monkeypatch) -> None:
     assert stop_msg == "stopped"
 
     assert calls == {"start": 1, "status": 1, "stop": 1}
+
+
+@pytest.mark.parametrize(
+    ("device", "ie_config"),
+    [("NPU", None), ("CPU", "CPU_THROUGHPUT_STREAMS=2"), ("GPU", "GPU_THROUGHPUT_STREAMS=2")],
+)
+def test_dlsps_detection_properties(tmp_path: Path, device: str, ie_config: str | None) -> None:
+    manifest_path = tmp_path / "pipeline.json"
+    _write_file(
+        manifest_path,
+        json.dumps({"model_paths": ["person.xml", "patient.xml", "latch.xml"]}),
+    )
+    controller = DLSPSController(
+        DLSPSControllerConfig(base_url="http://localhost:8080", pipeline_version="nicu_tee")
+    )
+
+    payload = controller._build_start_payload(
+        str(manifest_path), user_overrides={"devices": {"detect": device}}
+    )
+
+    for model in ("person", "patient", "latch"):
+        expected = {"model": f"/models/{model}.xml", "device": device, "nireq": 2}
+        if ie_config is not None:
+            expected["ie-config"] = ie_config
+        assert payload["parameters"][f"{model}-detect-properties"] == expected
 
 
 def test_app_loop_count_increments_on_wrap(tmp_path: Path) -> None:
