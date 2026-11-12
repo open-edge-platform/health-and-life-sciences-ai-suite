@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import logging
+import sys
 import time as _time
 from collections import deque
 from typing import Any, Optional
@@ -27,6 +28,18 @@ import numpy as np
 
 logger = logging.getLogger("RppgCallback")
 logger.setLevel(logging.INFO)
+
+_OPENVINO_PYTHON_DIR = "/opt/intel/openvino_genai/python"
+
+
+def _import_openvino() -> Any:
+    try:
+        import openvino as ov
+    except ImportError:
+        # DLSPS 2026.3+ ships OpenVINO Python outside the default PYTHONPATH.
+        sys.path.append(_OPENVINO_PYTHON_DIR)
+        import openvino as ov
+    return ov
 
 
 # ---------------------------------------------------------------------------
@@ -188,14 +201,18 @@ class RppgCallback:
 
     def _get_engine(self) -> Any:
         if self._engine is None:
-            import openvino as ov
+            ov = _import_openvino()
             core = ov.Core()
+            model = core.read_model(self._model_path)
+            # NPU segfaults compiling the dynamic batch dim; inference always uses BATCH_SIZE.
+            size = _Preprocessor.IMG_SIZE
+            model.reshape({inp: [_Preprocessor.BATCH_SIZE, size, size, 3] for inp in model.inputs})
             try:
-                self._engine = core.compile_model(self._model_path, self._device)
+                self._engine = core.compile_model(model, self._device)
                 logger.info("rPPG model compiled on %s", self._device)
             except Exception:
                 logger.warning("rPPG compile failed on %s, falling back to CPU", self._device)
-                self._engine = core.compile_model(self._model_path, "CPU")
+                self._engine = core.compile_model(model, "CPU")
         return self._engine
 
     def process(self, frame) -> bool:
