@@ -86,15 +86,17 @@ and extension variants.
 
 ### 2. Backbone
 
-Training initializes from the **nvidia/mit-b5** ImageNet backbone. On a machine
-with internet access, download the Hugging Face snapshot and copy it to the
-target machine at `models/mit_b5_hf`:
+Training initializes from the **nvidia/mit-b5** ImageNet backbone. From the app
+folder, download the Hugging Face snapshot to `models\mit_b5_hf`:
 
-```python
-# on an internet-connected machine
-from huggingface_hub import snapshot_download
-snapshot_download("nvidia/mit-b5", local_dir="mit_b5_hf")
+```powershell
+venv\Scripts\python.exe -m pip install huggingface_hub
+venv\Scripts\python.exe -c "from huggingface_hub import snapshot_download; snapshot_download('nvidia/mit-b5', local_dir='models/mit_b5_hf')"
 ```
+
+If the target machine has no internet access, run the same two commands on an
+internet-connected machine (any Python 3 in place of `venv\Scripts\python.exe`),
+then copy the resulting `models\mit_b5_hf` folder to the target machine.
 
 > [!IMPORTANT]
 > **License note:** `nvidia/mit-b5` carries NVIDIA's SegFormer license
@@ -125,9 +127,9 @@ torch wheel first if you want iGPU training. CPU training also works, but it is 
 Alternatively, run the trainer directly for more control:
 
 ```powershell
-venv\Scripts\python.exe -m backend.bootstrap.train ^
-    --data data\OTU_2d --backbone-dir models\mit_b5_hf ^
-    --res 256 --epochs 40 --batch 4 --lr 6e-5 --device xpu ^
+venv\Scripts\python.exe -m backend.bootstrap.train `
+    --data data\OTU_2d --backbone-dir models\mit_b5_hf `
+    --res 256 --epochs 40 --batch 4 --lr 6e-5 --device xpu `
     --out models\segformer_b5_mmotu
 ```
 
@@ -137,14 +139,14 @@ check only — the authoritative number comes from the OpenVINO™ evaluation be
 Smoke-test the pipeline end to end in a few steps first:
 
 ```powershell
-venv\Scripts\python.exe -m backend.bootstrap.train --data data\OTU_2d ^
+venv\Scripts\python.exe -m backend.bootstrap.train --data data\OTU_2d `
     --backbone-dir models\mit_b5_hf --device xpu --smoke-steps 8 --out models\_seg_smoke
 ```
 
 ## Export to OpenVINO™ IR
 
 ```powershell
-venv\Scripts\python.exe -m backend.bootstrap.export ^
+venv\Scripts\python.exe -m backend.bootstrap.export `
     --from-pretrained models\segformer_b5_mmotu --res 256
 ```
 
@@ -160,8 +162,8 @@ fp16) — the app's default.
 ## Verify the result
 
 ```powershell
-venv\Scripts\python.exe -m backend.bootstrap.eval ^
-    --ir models\ds2net_segformer_b5_256\model.xml --res 256 ^
+venv\Scripts\python.exe -m backend.bootstrap.eval `
+    --ir models\ds2net_segformer_b5_256\model.xml --res 256 `
     --data data\OTU_2d --device GPU
 ```
 
@@ -276,7 +278,7 @@ Alternatively, run each stage directly for more control (swap `xpu` for `cpu` to
 ```powershell
 venv\Scripts\python.exe -m backend.bootstrap.sam.prepare_yolo_data --data data\OTU_2d
 venv\Scripts\python.exe -m backend.bootstrap.sam.train_yolo --device xpu
-venv\Scripts\python.exe -m backend.bootstrap.sam.finetune_encoder ^
+venv\Scripts\python.exe -m backend.bootstrap.sam.finetune_encoder `
     --weights models\sam_vit_b_01ec64.pth --data data\OTU_2d --device xpu
 venv\Scripts\python.exe -m backend.bootstrap.sam.export_yolo
 venv\Scripts\python.exe -m backend.bootstrap.sam.export_encoder --weights models\sam256_stockft.pth
