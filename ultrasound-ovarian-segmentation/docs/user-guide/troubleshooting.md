@@ -60,7 +60,7 @@ The most likely causes are:
 - The IR was exported **without** `--from-pretrained` (random weights). Re-run:
 
   ```powershell
-  venv\Scripts\python.exe -m backend.bootstrap.export ^
+  venv\Scripts\python.exe -m backend.bootstrap.export `
       --from-pretrained models\segformer_b5_mmotu --res 256
   ```
 
