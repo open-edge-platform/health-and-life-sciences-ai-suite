@@ -90,9 +90,10 @@ Training initializes from the **nvidia/mit-b5** ImageNet backbone. On a machine
 with internet access, download the Hugging Face snapshot and copy it to the
 target machine at `models/mit_b5_hf`:
 
-```powershell
+```python
 # on an internet-connected machine
-curl -L -o models\mit_b5_hf\nvidia_mit_b5.tar.gz https://huggingface.co/nvidia/mit-b5/resolve/main/pytorch_model.bin
+from huggingface_hub import snapshot_download
+snapshot_download("nvidia/mit-b5", local_dir="mit_b5_hf")
 ```
 
 > [!IMPORTANT]

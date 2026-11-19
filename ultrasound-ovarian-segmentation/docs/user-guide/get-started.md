@@ -164,18 +164,6 @@ safety net rather than a bottleneck. See
 [Runtime Configuration](./runtime-configuration.md) to change the cap or disable
 the governor to measure uncapped utilization.
 
-## Clone the repository
-
-Run these commands in **PowerShell** (not Command Prompt or a `.bat` prompt). For the 2026.3.0 release, clone the `v2026.3.0` tag; for the current release-candidate validation, use `v2026.3.0-rc1`.
-
-```powershell
-git clone --branch v2026.3.0 https://github.com/open-edge-platform/health-and-life-sciences-ai-suite.git
-cd health-and-life-sciences-ai-suite\ultrasound-ovarian-segmentation
-```
-
-> [!NOTE]
-> `.ps1` scripts require Windows PowerShell or PowerShell 7. Open PowerShell, navigate to the `ultrasound-ovarian-segmentation` directory, and run the commands below. Administrator mode is **not required** for normal setup; use it only if the host policy or installed software specifically requires elevation.
-
 ## Next steps
 
 - [Runtime Configuration](./runtime-configuration.md) — all flags and environment variables.
