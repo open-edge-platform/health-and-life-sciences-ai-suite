@@ -153,6 +153,7 @@ apt_install \
   ca-certificates curl gnupg wget \
   git make tar \
   python3 python3-venv python3-pip \
+  ffmpeg libx264-164 \
   lsb-release
 
 # ------------------------------------------------------------ Docker --------
