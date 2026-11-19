@@ -39,3 +39,22 @@ The initial feature set of the application is now available:
   #   - /dev/accel
   #   - /dev/accel/accel0
   ```
+
+## Version 2026.3.0-rc1
+
+**Release Date**: TBD
+
+### New
+
+- Added support for Intel Nova Lake (NVL-S) platforms on GPU and CPU.
+
+### Improved
+
+- Image tags updated to the `2026.3.0-rc1` release.
+- Live hardware metrics now use the shared `retail-benchmark` performance-tools image instead of a custom metrics collector.
+- Sample videos updated to 4K resolution.
+- Documentation updates for the new repository location.
+
+### Fixed
+
+- Fixed sample video downloads that failed due to broken links.
