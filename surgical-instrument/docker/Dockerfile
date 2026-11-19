@@ -28,6 +28,10 @@ ENV HTTP_PROXY=${HTTP_PROXY} HTTPS_PROXY=${HTTPS_PROXY} NO_PROXY=${NO_PROXY} \
     PIP_NO_CACHE_DIR=1
  
 USER root
+
+# The 2026.3.0 base ships OpenVINO under /opt/intel/openvino/python but no longer
+# puts it on PYTHONPATH, so `import openvino` fails without this.
+ENV PYTHONPATH=/opt/intel/openvino/python:${PYTHONPATH}
  
 # OpenCV runtime libs (libgl/glib for cv2 + its window, libusb for pypylon).
 # Do NOT reinstall openvino/numpy — they come from the base image and must not
@@ -50,6 +54,9 @@ RUN for f in $(grep -rlE 'apt\.repos\.intel\.com' /etc/apt 2>/dev/null || true);
  
 # pypylon usually ships in the base image; install only if missing.
 RUN python3 -c "import pypylon" 2>/dev/null || pip install --no-cache-dir pypylon
+
+# Fail the build (not the container) if a core runtime module is missing.
+RUN python3 -c "import openvino, numpy, cv2; print('openvino', openvino.__version__)"
  
 # --- App ---------------------------------------------------------------------
 WORKDIR /app
