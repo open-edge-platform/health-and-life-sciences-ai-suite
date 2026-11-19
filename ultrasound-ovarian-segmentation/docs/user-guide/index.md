@@ -44,12 +44,16 @@ Supported inputs:
   variables that the application exposes.
 - See [Troubleshooting](./troubleshooting.md) for common issues.
 - See [Release Notes](./release-notes.md) for version history.
+- See [Application Flow](./application-flow.md) for an end-to-end usage walkthrough.
+- See [Uninstall](./uninstall.md) for cleanup and removal instructions.
 
 <!--hide_directive
 :::{toctree}
 :hidden:
 
 Get Started <get-started.md>
+Application Flow <./application-flow.md>
+Uninstall <./uninstall.md>
 Runtime Configuration <./runtime-configuration.md>
 Troubleshooting <./troubleshooting.md>
 Release Notes <./release-notes.md>
