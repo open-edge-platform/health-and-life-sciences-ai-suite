@@ -1,5 +1,5 @@
 numpy>=1.26.0
-opencv-python>=4.9.0
+opencv-python>=4.9.0,<5  # 5.0.0 segfaults in cv2.imdecode on Nova Lake (ITEP-98611)
 requests>=2.31.0
 openvino>=2024.0.0
 flask>=3.0.0
