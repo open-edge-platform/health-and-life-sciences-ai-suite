@@ -1,3 +1,11 @@
+<!--hide_directive
+```{eval-rst}
+.. meta::
+   :description: Release notes for version 2026.3.0 of the Ultrasound Ovarian Segmentation sample application.
+   :keywords: release notes, 2026.3.0, ultrasound, ovarian tumor segmentation, DS2Net, SAM, OpenVINO
+```
+hide_directive-->
+
 # Release Notes: Ultrasound Ovarian Segmentation Sample Application
 
 ## Version 2026.3.0
@@ -8,7 +16,7 @@ This is the initial release of the Ultrasound Ovarian Segmentation sample applic
 includes the following features:
 
 - Real-time, promptless ovarian tumor segmentation on 2D ultrasound using a
-  SegFormer-B5 (DS2Net) model in the FP16 OpenVINO™ Toolkit (OpenVINO™) Intermediate
+  SegFormer-B5 (DS2Net) model in the FP16 OpenVINO™ Intermediate
   Representation (IR) format.
 - Decoupled capture, inference, and display pipeline with an OpenCV overlay pop-up window
   and a heads-up display (HUD) showing FPS, latency, and GPU metrics.
