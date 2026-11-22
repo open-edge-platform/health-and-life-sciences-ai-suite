@@ -3,19 +3,59 @@
 This guide takes you from a fresh clone to a running segmentation pop-up on a
 Windows machine with an Intel® Core™ Ultra (Intel® Arc™ iGPU).
 
+> **Important:** Run every command in this guide in **Windows PowerShell 5.1**
+> or **PowerShell 7** — not in Command Prompt (CMD). The setup and run scripts
+> are PowerShell (`.ps1`) files; CMD does not execute them and opens them as
+> text files instead.
+>
+> A regular (non-Administrator) PowerShell window is enough for cloning, setup,
+> model preparation, the segmentation pop-up, and the web dashboard. The only
+> exception is the **power** graph in the web dashboard: SoCWatch needs
+> Administrator rights, so to see it, launch `.\run_webapp.ps1` from a
+> PowerShell window opened with **Run as administrator**. Without it, all other
+> graphs still work.
+
 ## Prerequisites
 
 - Windows 11 with an Intel® Core™ Ultra processor (Intel® Arc™ iGPU).
 - Up-to-date Intel graphics drivers. The iGPU must appear in Task Manager and be
   visible to the OpenVINO™ Toolkit (OpenVINO™).
 - Python 3.11 (64-bit) on `PATH`.
+- [Git for Windows](https://git-scm.com/download/win) on `PATH` — used to clone
+  the repository.
 - [Node.js](https://nodejs.org) 18+ on `PATH` — used once to build the web
   dashboard UI; the first `run_webapp.ps1` builds it automatically.
-- PowerShell. If scripts are blocked, allow them for the current session only:
+- Windows PowerShell 5.1 (included with Windows 11) or PowerShell 7. To open
+  it, press **Start**, type `PowerShell`, and select **Windows PowerShell**. If
+  running a script fails with a `PSSecurityException` / "running scripts is
+  disabled on this system" error, allow scripts for the current session only
+  (no Administrator rights needed):
 
   ```powershell
   Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
   ```
+
+## Clone the repository
+
+Clone the suite. The `--sparse` option downloads only
+the Ultrasound Ovarian Segmentation application, not the other applications in
+the suite. To learn more about partial cloning, see the
+[Repository Cloning guide](https://docs.openedgeplatform.intel.com/2026.3/OEP-articles/contribution-guide.html#repository-cloning-partial-cloning).
+
+In PowerShell, go to the folder where you want the code and run:
+
+```powershell
+git clone --filter=blob:none --sparse --branch main https://github.com/open-edge-platform/health-and-life-sciences-ai-suite.git
+cd health-and-life-sciences-ai-suite
+git sparse-checkout set ultrasound-ovarian-segmentation
+cd ultrasound-ovarian-segmentation
+```
+
+`main` is the latest development version. To use the v2026.3.0 release,
+replace `main` with the `release-2026.3.0` branch or the `v2026.3.0` tag.
+
+All commands in the following steps are run from this
+`ultrasound-ovarian-segmentation` folder.
 
 ## 1. Install runtime dependencies
 
