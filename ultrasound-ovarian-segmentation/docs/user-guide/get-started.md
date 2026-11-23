@@ -1,9 +1,18 @@
+<!--hide_directive
+```{eval-rst}
+.. meta::
+   :description: Step-by-step instructions to install, prepare the model, and run the Ultrasound Ovarian Segmentation sample application on Windows with an Intel® Core™ Ultra processor.
+   :keywords: get started, setup, Windows, Intel Core Ultra, OpenVINO, model preparation, web dashboard, ovarian tumor segmentation
+```
+hide_directive-->
+
 # Get Started
 
 This guide takes you from a fresh clone to a running segmentation pop-up on a
 Windows machine with an Intel® Core™ Ultra (Intel® Arc™ iGPU).
 
-> **Important:** Run every command in this guide in **Windows PowerShell 5.1**
+> [!IMPORTANT]
+> Run every command in this guide in **Windows PowerShell 5.1**
 > or **PowerShell 7** — not in Command Prompt (CMD). The setup and run scripts
 > are PowerShell (`.ps1`) files; CMD does not execute them and opens them as
 > text files instead.
@@ -58,7 +67,7 @@ the latest development version, use `main`.
 All commands in the following steps are run from this
 `ultrasound-ovarian-segmentation` folder.
 
-## 1. Install runtime dependencies
+## 1. Install Runtime Dependencies
 
 From the `ultrasound-ovarian-segmentation` folder:
 
@@ -70,7 +79,7 @@ This creates a local `venv` and installs the runtime dependencies
 (`requirements.txt`): OpenVINO™, OpenCV, NumPy, and pywin32 (for the GPU-Engine
 counters the governor reads).
 
-## 2. Prepare the model
+## 2. Prepare the Model
 
 The application does not include a trained model. It loads its default Intermediate
 Representation (IR) from `models\ds2net_segformer_b5_256\model.xml`. Pick the case that
@@ -102,15 +111,15 @@ ViT-B weights downloaded first). The full walkthrough — dataset layout, backbo
 training, export, expected Dice, and the SAM recipe — is in
 [Model Preparation](./get-started/model-preparation.md).
 
-## 3. Run the segmentation pop-up
+## 3. Run the Segmentation Pop-Up
 
 ```powershell
 .\run.ps1 -Source file -Input C:\path\to\clip.mp4 -Device GPU
 ```
 
 A window opens showing the **original frame next to the segmented frame**
-(tumor-mask overlay), plus a HUD showing inference FPS/latency and live iGPU
-utilization. Press `q` or `Esc`
+(tumor-mask overlay), plus a UI showing inference FPS/latency and live
+iGPU utilization. Press `q` or `Esc`
 to quit, or close the window.
 
 For a single overlaid pane, pass `--view overlay` to the command:
@@ -132,14 +141,14 @@ Run the prompted SAM-256 architecture (after preparing its IRs):
 .\run.ps1 -Arch sam -Source file -Input C:\path\to\clip.mp4 -Device GPU
 ```
 
-## 4. Run the web dashboard (UI)
+## 4. Run the Web Dashboard (UI)
 
 The web dashboard is the primary way to use the application: on top of the same
 `src/` pipeline the CLI uses, it adds device/use-case selection in the browser
-plus live hardware utilization (CPU / iGPU / NPU / power / memory) and pipeline
-KPIs.
+plus live hardware utilization graphs for CPU, iGPU, NPU, power,
+and memory, along with pipeline KPIs.
 
-### Prepare the dashboard (one-time)
+### Prepare the Dashboard (One-Time)
 
 Have all of this ready **before** you launch, so the first **Start** is seamless
 and every graph lights up:
@@ -159,15 +168,20 @@ and every graph lights up:
    on your first `run_webapp.ps1`, so there is nothing to build by hand; just
    install [Node.js](https://nodejs.org) 18+. (To pre-build instead, run
    `cd webapp\ui; npm install; npm run build`.)
-5. **Hardware-utilization tools** — CPU and memory monitoring need no extra installation. iGPU, NPU, and power graphs use Intel vendor tools (SoCWatch and Level Zero). Obtain these tools in one of the following ways:
+5. **Hardware-utilization tools** — CPU and memory monitoring need no extra installation.
+   iGPU, NPU, and power graphs use Intel vendor tools (SoCWatch and Level Zero). Obtain these
+   tools in one of the following ways:
 
-   - **Existing benchmark installation:** copy the complete `monitoring\tools` folder from another machine that already has the HLS benchmark tools staged.
+   - **Existing benchmark installation:** copy the complete `monitoring\tools` folder from
+   another machine that already has the Health and Life Sciences benchmark tools staged.
    - **Fresh setup:** obtain SoCWatch and Level Zero through your organization's Intel software/software-license channel or the approved Intel client-GPU installation package; do not download binaries from an untrusted source.
    - **Source build:** if your environment provides the Level Zero and performance-tools source trees, copy or build their outputs into `monitoring\tools` using the layout described in [Troubleshooting](./troubleshooting.md#web-dashboard-hw-monitoring-disabled).
 
-   The application still runs and reports CPU and memory when these vendor tools are absent. iGPU, NPU, and power graphs remain disabled until the tools are staged and the app is restarted.
+   The application still runs and reports CPU and memory when these vendor tools are absent.
+   iGPU, NPU, and power graphs remain disabled until the tools are staged and the application
+   is restarted.
 
-### Launch and run
+### Launch and Run
 
 Launch:
 
@@ -179,8 +193,10 @@ On the **first** launch this builds the browser UI from source (needs Node.js;
 one-time, which takes about a minute to complete), then serves it at <http://127.0.0.1:8080> and opens
 your browser; later launches skip the build. Next:
 
-1. Pick a **Use case** (default *DS2Net Tumor Segmentation*), a **Device**
-   (Intel iGPU or CPU), and **Precision** (FP16).
+1. The model is chosen at launch with `.\run_webapp.ps1 -UseCase ds2net` (default) or
+   `-UseCase sam`; the UI only shows it as a read-only Model badge.
+   Pick a **Device** (Intel iGPU or CPU), **Precision** (FP16), and **Source** (video file,
+   webcam, or folder of still ultrasound frames).
 2. In **Video / image source**, enter the path to a clip (`.mp4`) or a folder of
    frames — or leave it blank to use the `data\OTU_2d\images` dataset you
    prepared during model preparation.
@@ -207,7 +223,7 @@ safety net rather than a bottleneck. See
 [Runtime Configuration](./runtime-configuration.md) to change the cap or disable
 the governor to measure uncapped utilization.
 
-## Next steps
+## Next Steps
 
 - [Runtime Configuration](./runtime-configuration.md) — all flags and environment variables.
 - [Troubleshooting](./troubleshooting.md) — device not found, no pop-up, low Dice.

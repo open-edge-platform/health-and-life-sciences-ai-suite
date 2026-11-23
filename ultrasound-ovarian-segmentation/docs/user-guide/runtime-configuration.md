@@ -1,14 +1,22 @@
+<!--hide_directive
+```{eval-rst}
+.. meta::
+   :description: Reference for the run.ps1 parameters, command-line flags, and environment variables of the Ultrasound Ovarian Segmentation sample application.
+   :keywords: runtime configuration, command-line flags, environment variables, run.ps1, GPU cap, governor, OpenVINO
+```
+hide_directive-->
+
 # Runtime Configuration
 
-Every option is available as a CLI flag and as an environment variable (with the CLI
-flag taking precedence). Launch via `run.ps1` in a typical situation, or call the application
-module directly for full control:
+Every option is available as a CLI flag and as an environment variable. The CLI flag takes
+precedence. Use `run.ps1` for typical situations, or call the application module directly for
+full control:
 
 ```powershell
 venv\Scripts\python.exe -m src.app --source file --input clip.mp4 --device GPU --gpu-cap 80
 ```
 
-## run.ps1 parameters
+## run.ps1 Parameters
 
 | Parameter | Values | Default | Description |
 | --- | --- | --- | --- |
@@ -20,13 +28,13 @@ venv\Scripts\python.exe -m src.app --source file --input clip.mp4 --device GPU -
 | `-Venv` | path | `venv` | Virtual environment folder |
 | `-Extra` | — | — | Flags after `--` are forwarded to the application |
 
-Example of forwarding extra flags:
+The following example forwards extra flags:
 
 ```powershell
 .\run.ps1 -Source file -Input clip.mp4 -- --record out.mp4 --gpu-cap 70 --alpha 0.5
 ```
 
-## Application flags
+## Application Flags
 
 ### Source
 
@@ -39,7 +47,7 @@ Example of forwarding extra flags:
 | `--height` | `HEIGHT` | `720` | Requested capture height |
 | `--target-fps` | `TARGET_FPS` | `30` | Pacing for folder/webcam sources |
 
-### Model / inference
+### Model / Inference
 
 | Flag | Environment variable | Default | Description |
 | --- | --- | --- | --- |
@@ -54,29 +62,29 @@ Example of forwarding extra flags:
 
 > [!NOTE]
 >
-> `--res` must equal the resolution the IR was exported at. The default DS2Net IR
-> is exported at 256; if you export at another resolution, pass the matching
-> `--res`. The `sam` architecture is fixed at 256 and uses the three `--sam-*` IR paths
-> instead of `--model`.
+> `--res` must equal the resolution at which the IR was exported. The default DS2Net IR is
+> exported at 256. If you export at another resolution, pass the matching `--res`. The `sam`
+> architecture is fixed at 256 and uses the three `--sam-*` IR paths instead of `--model`.
 >
 > ---
 >
-> **Device:** both models target the Intel integrated GPU (iGPU) through the `GPU`
-> device. `CPU` is a development or sanity fallback. The **NPU is not supported**; passing `NPU` logs a notice and
-> falls back to GPU or CPU.
+> **Device:** Both models target the Intel integrated GPU (iGPU) through the `GPU` device.
+> `CPU` is a development or sanity fallback. The **NPU is not supported**. Passing `NPU` logs
+> a notice and falls back to GPU or CPU.
 
-### GPU utilization cap
+### GPU Utilization Cap
 
 | Flag | Environment variable | Default | Description |
 | --- | --- | --- | --- |
 | `--gpu-cap` | `GPU_CAP` | `80` | Hard iGPU busiest-engine utilization ceiling (KPI) |
 | `--no-governor` | `NO_GOVERNOR=1` | off | Disable the governor (measure uncapped utilization) |
 
-The governor targets a value of around 70% and hard-kicks over the cap, clamping a per-frame
-delay in `[0, 1.0] s`. It reads Windows GPU-Engine counters via pywin32; on non-Windows
-machines it becomes inactive so the application still runs for development.
+The governor targets a utilization of around 70% and applies a hard throttle when utilization
+exceeds the cap, clamping the per-frame delay to the range `[0, 1.0] s`. It reads Windows
+GPU-Engine counters through pywin32. On non-Windows machines, the governor becomes inactive,
+so the application still runs for development.
 
-### Display / output
+### Display / Output
 
 | Flag | Environment variable | Default | Description |
 | --- | --- | --- | --- |
@@ -91,7 +99,8 @@ machines it becomes inactive so the application still runs for development.
 
 ## Examples
 
-Measure uncapped iGPU utilization (governor off), headless, recording:
+Measure uncapped iGPU utilization with the governor disabled, running headless, and recording
+the output:
 
 ```powershell
 .\run.ps1 -Source folder -Input C:\frames -Device GPU -- --no-governor --headless --record soak.mp4
