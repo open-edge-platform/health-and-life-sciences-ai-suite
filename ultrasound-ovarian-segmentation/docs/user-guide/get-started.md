@@ -159,11 +159,13 @@ and every graph lights up:
    on your first `run_webapp.ps1`, so there is nothing to build by hand; just
    install [Node.js](https://nodejs.org) 18+. (To pre-build instead, run
    `cd webapp\ui; npm install; npm run build`.)
-5. **Hardware-utilization tools** — CPU and memory need nothing extra, but the
-   iGPU / NPU / power graphs use Intel vendor tools (SoCWatch, Level Zero) that
-   are **not** committed (as they total ~139 MB). Stage them once by copying a
-   `monitoring\tools` folder from your existing benchmark install into this
-   clone. Without them the application still runs and shows CPU and memory.
+5. **Hardware-utilization tools** — CPU and memory monitoring need no extra installation. iGPU, NPU, and power graphs use Intel vendor tools (SoCWatch and Level Zero). Obtain these tools in one of the following ways:
+
+   - **Existing benchmark installation:** copy the complete `monitoring\tools` folder from another machine that already has the HLS benchmark tools staged.
+   - **Fresh setup:** obtain SoCWatch and Level Zero through your organization's Intel software/software-license channel or the approved Intel client-GPU installation package; do not download binaries from an untrusted source.
+   - **Source build:** if your environment provides the Level Zero and performance-tools source trees, copy or build their outputs into `monitoring\tools` using the layout described in [Troubleshooting](./troubleshooting.md#web-dashboard-hw-monitoring-disabled).
+
+   The application still runs and reports CPU and memory when these vendor tools are absent. iGPU, NPU, and power graphs remain disabled until the tools are staged and the app is restarted.
 
 ### Launch and run
 
