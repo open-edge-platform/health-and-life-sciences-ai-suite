@@ -64,7 +64,7 @@ make backend-venv
 
 Creates `.venv-backend/` with:
 
-- `torch==2.7.1` + `torchvision==0.22.1` (both `+xpu` builds from the
+- `torch==2.12.1` + `torchvision==0.27.1` (both `+xpu` builds from the
   `pytorch/whl/xpu` index) — the Intel iGPU device backend.
 - `ultralytics==8.4.75` (YOLO11 training).
 - `openvino==2026.2.0` (FP16 IR export).
