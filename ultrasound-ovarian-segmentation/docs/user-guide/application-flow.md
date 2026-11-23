@@ -37,7 +37,9 @@ Alternatively, launch the web dashboard:
 .\run_webapp.ps1
 ```
 
-At the browser dashboard, select the use case, device, precision, and input source, then click **Start**.
+At the browser dashboard, select the device, precision, and input source, then click **Start**.
+For the browser, the use case is fixed at launch (`.\run_webapp.ps1 -UseCase ds2net`, default,
+or `-UseCase sam`) and shown as a read-only badge.
 
 ## 4. Processing Flow
 
@@ -48,7 +50,9 @@ At the browser dashboard, select the use case, device, precision, and input sour
    - SAM-256 produces a prompted bounding box and instance mask.
 4. The display overlays the mask and/or prompt box on the original frame.
 5. The UI reports FPS, inference latency, GPU utilization, and the GPU-utilization KPI.
-6. Stopping or reaching end-of-file shuts down capture, inference, display, and monitoring cleanly.
+6. File and folder sources loop by default. The run ends when you stop it (press q or Esc, or
+   click **Stop**), or at end-of-file if `--no-loop` (or `LOOP=0`) is set. Capture, inference,
+   display, and monitoring then shut down cleanly. See [Runtime Configuration](./runtime-configuration.md#application-flags).
 
 ## 5. Stop the Application
 

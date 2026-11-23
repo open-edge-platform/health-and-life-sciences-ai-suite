@@ -11,7 +11,8 @@ hide_directive-->
 This guide takes you from a fresh clone to a running segmentation pop-up on a
 Windows machine with an Intel® Core™ Ultra (Intel® Arc™ iGPU).
 
-> **Important:** Run every command in this guide in **Windows PowerShell 5.1**
+> [!IMPORTANT]
+> Run every command in this guide in **Windows PowerShell 5.1**
 > or **PowerShell 7** — not in Command Prompt (CMD). The setup and run scripts
 > are PowerShell (`.ps1`) files; CMD does not execute them and opens them as
 > text files instead.
@@ -192,8 +193,10 @@ On the **first** launch this builds the browser UI from source (needs Node.js;
 one-time, which takes about a minute to complete), then serves it at <http://127.0.0.1:8080> and opens
 your browser; later launches skip the build. Next:
 
-1. Pick a **Use case** (default *DS2Net Tumor Segmentation*), a **Device**
-   (Intel iGPU or CPU), and **Precision** (FP16).
+1. The model is chosen at launch with `.\run_webapp.ps1 -UseCase ds2net` (default) or
+   `-UseCase sam`; the UI only shows it as a read-only Model badge.
+   Pick a **Device** (Intel iGPU or CPU), **Precision** (FP16), and **Source** (video file,
+   webcam, or folder of still ultrasound frames).
 2. In **Video / image source**, enter the path to a clip (`.mp4`) or a folder of
    frames — or leave it blank to use the `data\OTU_2d\images` dataset you
    prepared during model preparation.
