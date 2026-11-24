@@ -8,6 +8,9 @@ import requests
 
 from backend_mvp.device_profiles import resolve_pipeline_settings
 
+# DLSPS 2026.3.0-rc2+ only accepts file:// sources under its resources directory.
+DLSPS_MEDIA_DIR = "/home/pipeline-server/resources"
+
 
 @dataclass(frozen=True)
 class DLSPSControllerConfig:
@@ -113,13 +116,13 @@ class DLSPSController:
         """Build PipelineRequest payload expected by newer DLSPS APIs.
 
         We derive the source from the resolved NICU pipeline manifest.
-        For relative paths we target the dlsps-mounted /data directory.
+        For relative paths we target the dlsps-mounted DLSPS_MEDIA_DIR.
 
         When using the multi-model pipeline (nicu_tee), we set individual
         model parameters for each gvadetect element.
 
         ``user_overrides`` may contain:
-          - video_file: uploaded filename → /data/uploads/<name>
+          - video_file: uploaded filename → DLSPS_MEDIA_DIR/uploads/<name>
           - roi: {top, left, bottom, right} for rPPG face ROI
           - devices: {detect, rppg, action} device overrides
         """
@@ -133,7 +136,7 @@ class DLSPSController:
                 if source_path.startswith("/"):
                     container_path = source_path
                 else:
-                    container_path = f"/data/{Path(source_path).name}"
+                    container_path = f"{DLSPS_MEDIA_DIR}/{Path(source_path).name}"
                 payload["source"] = {
                     "type": "uri",
                     "uri": f"file://{container_path}",
@@ -144,7 +147,7 @@ class DLSPSController:
             if isinstance(uploaded, str) and uploaded.strip():
                 payload["source"] = {
                     "type": "uri",
-                    "uri": f"file:///data/uploads/{uploaded}",
+                    "uri": f"file://{DLSPS_MEDIA_DIR}/uploads/{uploaded}",
                 }
 
             device = manifest.get("device", "CPU") if isinstance(manifest, dict) else "CPU"

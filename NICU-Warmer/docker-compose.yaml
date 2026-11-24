@@ -118,7 +118,7 @@ services:
       - ./dlsps/user_defined_pipelines:/var/cache/pipeline_root/user_defined_pipelines
       - ./configs/workload_to_device.json:/configs/workload_to_device.json:ro
       - ./configs/res:/configs/res:ro
-      - ./Warmer_Testbed_YTHD.mp4:/data/Warmer_Testbed_YTHD.mp4:ro
+      - ./Warmer_Testbed_YTHD.mp4:/home/pipeline-server/resources/Warmer_Testbed_YTHD.mp4:ro
       - ./person-detect-fp32.xml:/models/person-detect-fp32.xml:ro
       - ./person-detect-fp32.bin:/models/person-detect-fp32.bin:ro
       - ./patient-detect-fp32.xml:/models/patient-detect-fp32.xml:ro
@@ -135,7 +135,7 @@ services:
       - ./data/kinetics.txt:/models/action/kinetics.txt:ro
       - ./extensions:/extensions:ro
       - ./extensions/publisher_utils_patched.py:/home/pipeline-server/utils/publisher_utils.py:ro
-      - ./uploads:/data/uploads:ro
+      - ./uploads:/home/pipeline-server/resources/uploads:ro
       - dlsps-shared:/shared
     depends_on:
       - nicu-mqtt
