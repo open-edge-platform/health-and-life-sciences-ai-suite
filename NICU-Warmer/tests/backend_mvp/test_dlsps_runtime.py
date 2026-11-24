@@ -121,6 +121,26 @@ def test_dlsps_detection_properties(tmp_path: Path, device: str, ie_config: str 
         assert payload["parameters"][f"{model}-detect-properties"] == expected
 
 
+@pytest.mark.parametrize(
+    ("overrides", "expected_uri"),
+    [
+        ({}, "file:///home/pipeline-server/resources/input.mp4"),
+        (
+            {"video_file": "clip.mp4"},
+            "file:///home/pipeline-server/resources/uploads/clip.mp4",
+        ),
+    ],
+)
+def test_dlsps_source_uri_under_resources(tmp_path: Path, overrides: dict, expected_uri: str) -> None:
+    manifest_path = tmp_path / "pipeline.json"
+    _write_file(manifest_path, json.dumps({"source": {"path": "input.mp4"}}))
+    controller = DLSPSController(DLSPSControllerConfig(base_url="http://localhost:8080"))
+
+    payload = controller._build_start_payload(str(manifest_path), user_overrides=overrides)
+
+    assert payload["source"] == {"type": "uri", "uri": expected_uri}
+
+
 def test_app_loop_count_increments_on_wrap(tmp_path: Path) -> None:
     cfg = _make_config(tmp_path)
     app = create_app(str(cfg))
