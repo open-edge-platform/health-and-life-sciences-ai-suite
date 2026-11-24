@@ -25,7 +25,7 @@ For the previous 2026.2 release, use the original monorepo checkout below instea
 and follow the documentation from that checkout. It is not the current migrated source:
 
 ```bash
-git clone --filter=blob:none --sparse --branch release-2026.2.0 https://github.com/open-edge-platform/edge-ai-suites.git
+git clone --filter=blob:none --sparse --branch release-2026.3.0 https://github.com/open-edge-platform/edge-ai-suites.git
 cd edge-ai-suites
 git sparse-checkout set health-and-life-sciences-ai-suite
 cd health-and-life-sciences-ai-suite/multi_modal_patient_monitoring
