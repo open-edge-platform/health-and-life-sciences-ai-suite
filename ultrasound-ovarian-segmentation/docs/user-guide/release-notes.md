@@ -12,8 +12,6 @@ hide_directive-->
 
 **Release Date**: December 7, 2026
 
-### Overview
-
 This is the initial release of the Ultrasound Ovarian Segmentation sample application.
 
 ### New
