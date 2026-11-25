@@ -1,5 +1,5 @@
 # -------- Stage 1: Download GPL Sources --------
-FROM intel/hl-ai-nicu-backend:2026.1.0 AS source-builder
+FROM intel/hl-ai-nicu-backend:2026.3.0-rc2 AS source-builder
 LABEL stage="source-builder"
 
 USER root
@@ -29,9 +29,9 @@ RUN if [ -f /etc/apt/sources.list ]; then \
     done
 
 # -------- Final Stage --------
-FROM intel/hl-ai-nicu-backend:2026.1.0-rc1 AS final
+FROM intel/hl-ai-nicu-backend:2026.3.0-rc2 AS final
 
-LABEL description="Source redistribution image for GPL-licensed packages in intel/hl-ai-nicu-backend:2026.1.0-rc1"
+LABEL description="Source redistribution image for GPL-licensed packages in intel/hl-ai-nicu-backend:2026.3.0-rc2"
 
 USER root
 
