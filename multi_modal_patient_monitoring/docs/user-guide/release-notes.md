@@ -1,5 +1,25 @@
 # Release Notes: Multi-Modal Patient Monitoring
 
+## Version 2026.3.0
+
+**Release Date**: December 7, 2026
+
+**New**:
+
+- Added support for Intel Nova Lake (NVL-S) platforms on GPU and CPU.
+
+**Improved**:
+
+- Updated image tags to the `2026.3.0-rc1` release.
+- Live hardware metrics now use the shared performance-tools image instead of a custom metrics
+  collector.
+- Updated sample videos to 4K resolution.
+- Updated the documentation for the new repository location.
+
+**Fixed**:
+
+- Fixed sample video downloads that failed due to broken links.
+
 ## Version 2026.2.0
 
 **Release Date**: August 18, 2026
