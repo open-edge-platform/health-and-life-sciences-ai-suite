@@ -15,7 +15,7 @@
 # SPDX-FileCopyrightText: (C) 2026 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
-FROM intel/dlstreamer-pipeline-server:2026.3.0-ubuntu24-rc1
+FROM intel/dlstreamer-pipeline-server:2026.3.0-ubuntu24-rc2
  
 # Optional corporate proxy (leave empty for none).
 ARG HTTP_PROXY=
