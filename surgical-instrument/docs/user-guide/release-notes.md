@@ -1,5 +1,25 @@
 # Release Notes: Surgical Instrument
 
+## Version 2026.3.0-rc1
+
+**Release Date**: TBD
+
+### New
+
+- Added Intel Panther Lake (PTL) to the supported hardware.
+
+### Improved
+
+- Image tags updated to the `2026.3.0-rc1` release, including the DL Streamer Pipeline Server base image.
+- `make up` in registry mode now fails clearly when an image pull fails instead of silently falling back to a local build.
+- Documentation updates for the new repository location, dataset sizes, and repository layout.
+
+### Fixed
+
+- Fixed container startup failure (`ModuleNotFoundError: openvino`) on the `2026.3.0-rc1` base image.
+- Fixed model-training errors on Intel GPU (XPU).
+- Fixed host-setup failures when installing base tools.
+
 ## Version 2026.2.0
 
 **Release Date**: September 10, 2026
