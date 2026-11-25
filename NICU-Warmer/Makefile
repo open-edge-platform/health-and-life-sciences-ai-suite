@@ -3,7 +3,7 @@
 # Default device profile (mixed-optimized: detection=GPU, rPPG=CPU, action=NPU)
 DEVICE_ENV ?= configs/res/mixed-optimized.env
 REGISTRY ?= true
-TAG ?= 2026.3.0-rc1
+TAG ?= 2026.3.0-rc2
 export TAG
 
 RPPG_CONVERTER_IMAGE ?= nicu-rppg-converter:local
@@ -14,7 +14,20 @@ setup:
 	@echo ""
 	@if ls models_rppg/*.hdf5 >/dev/null 2>&1 && { [ ! -f models_rppg/mtts_can.xml ] || [ ! -f models_rppg/mtts_can.bin ]; }; then \
 		echo "HDF5 model found - converting to OpenVINO IR (TensorFlow + OpenVINO in container)..."; \
-		$(MAKE) convert-rppg; \
+		$(MAKE) convert-rppg || exit $$?; \
+	elif ls models_rppg/*.hdf5 >/dev/null 2>&1; then \
+		true; \
+	elif [ -f models_rppg/mtts_can.xml ] && [ -f models_rppg/mtts_can.bin ]; then \
+		echo "Required rPPG OpenVINO IR artifacts are present."; \
+	else \
+		echo "ERROR: required rPPG model assets are missing."; \
+		echo "Place models_rppg/mtts_can.hdf5 in models_rppg/, or place models_rppg/mtts_can.xml and models_rppg/mtts_can.bin."; \
+		echo "See the NICU Warmer setup documentation for staging instructions."; \
+		exit 1; \
+	fi
+	@if [ ! -f models_rppg/mtts_can.xml ] || [ ! -f models_rppg/mtts_can.bin ]; then \
+		echo "ERROR: rPPG OpenVINO IR conversion did not produce both mtts_can.xml and mtts_can.bin."; \
+		exit 1; \
 	fi
 	@echo "Setup complete. Run 'make run' to start all services."
 

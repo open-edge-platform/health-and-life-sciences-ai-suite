@@ -21,7 +21,7 @@
 #
 SHELL := /bin/bash
 
-TAG ?= 2026.3.0-rc1
+TAG ?= 2026.3.0-rc2
 REGISTRY     ?= true
 REGISTRY_URL ?= intel/
 
@@ -240,9 +240,9 @@ $(BACKEND_VENV)/bin/python:
 
 .PHONY: backend-venv
 backend-venv: $(BACKEND_VENV)/bin/python ## Create .venv-backend with torch+xpu, Ultralytics, OpenVINO
-	@echo '[backend-venv] installing torch+xpu (2.7.1) from pytorch xpu index'
+	@echo '[backend-venv] installing torch+xpu (2.12.1) from pytorch xpu index'
 	@$(PIP) install --index-url https://download.pytorch.org/whl/xpu \
-	  torch==2.7.1 torchvision==0.22.1
+	  torch==2.12.1 torchvision==0.27.1
 	@echo '[backend-venv] installing backend/requirements.txt'
 	@$(PIP) install -r backend/requirements.txt
 	@echo '[backend-venv] verifying torch.xpu is available (non-fatal)'
