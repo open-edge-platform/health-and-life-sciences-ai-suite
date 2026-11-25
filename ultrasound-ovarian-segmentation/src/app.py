@@ -31,7 +31,7 @@ if str(ROOT) not in sys.path:
 
 from src.config import parse_config  # noqa: E402
 from src.display import Presenter  # noqa: E402
-from src.gpu_governor import GpuGovernor  # noqa: E402
+from src.gpu_governor import GpuGovernor, _SAMPLER_ERR  # noqa: E402
 from src.segmenters import Result, create_segmenter  # noqa: E402
 from src.sources import create_source  # noqa: E402
 
@@ -213,7 +213,8 @@ def main() -> int:
         log.info("GPU governor active: cap=%.0f%% target=%.0f%% (throttles only if GPU%% climbs)",
                  governor.cap_pct, governor.target_pct)
     else:
-        log.info("GPU governor inactive (%s)", governor.snapshot().get("note") or "disabled")
+        log.info("GPU governor inactive (%s)",
+                 _SAMPLER_ERR or governor.snapshot().get("note") or "disabled")
 
     display_q: queue.Queue = queue.Queue(maxsize=1)
     infer_q: queue.Queue = queue.Queue(maxsize=1)

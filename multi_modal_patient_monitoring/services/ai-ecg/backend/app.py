@@ -1,9 +1,12 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+import logging
 import os
 import shutil
 import time
-from inference.embedding_engine import HubertECGInferenceEngine
+from inference.embedding_engine import HubertECGInferenceEngine, resolve_data_path
+
+logger = logging.getLogger(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -30,24 +33,31 @@ def health():
     return {"status": "ok"}
 
 
+def _data_path(filename: str) -> str:
+    try:
+        return resolve_data_path(filename)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid filename")
+
+
 @app.post("/upload")
 async def upload_ecg(file: UploadFile = File(...)):
     if not file.filename.endswith(".mat"):
         raise HTTPException(status_code=400, detail="Only .mat files are allowed")
 
-    file_path = os.path.join(DATA_DIR, file.filename)
+    file_path = _data_path(file.filename)
     try:
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
     finally:
         await file.close()
 
-    return {"status": "uploaded", "filename": file.filename}
+    return {"status": "uploaded", "filename": os.path.basename(file_path)}
 
 
 @app.get("/predict/{filename}")
 def predict_ecg(filename: str):
-    file_path = os.path.join(DATA_DIR, filename)
+    file_path = _data_path(filename)
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="File not found")
 
@@ -63,8 +73,9 @@ def predict_ecg(filename: str):
             "hubert_embedding": h_pred["embedding"],
             "hubert_inference_ms": h_pred["inference_ms"],
         }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception:
+        logger.exception("Inference failed for %s", filename)
+        raise HTTPException(status_code=500, detail="Inference failed")
 
 
 # -------- NEW TRUE STREAMING ENDPOINT --------
@@ -99,8 +110,9 @@ def predict_stream_next():
             "hubert_embedding": h_pred["embedding"],
             "hubert_inference_ms": h_pred["inference_ms"],
         }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception:
+        logger.exception("Stream inference failed for %s", filename)
+        raise HTTPException(status_code=500, detail="Inference failed")
 
 
 @app.get("/predict_hubert/{filename}")
@@ -112,7 +124,7 @@ def predict_hubert(filename: str):
     or for experimentation.
     """
 
-    file_path = os.path.join(DATA_DIR, filename)
+    file_path = _data_path(filename)
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="File not found")
 
@@ -127,5 +139,6 @@ def predict_hubert(filename: str):
         }
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
-    except Exception as e:  # pragma: no cover - runtime path
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception:  # pragma: no cover - runtime path
+        logger.exception("HuBERT inference failed for %s", filename)
+        raise HTTPException(status_code=500, detail="Inference failed")

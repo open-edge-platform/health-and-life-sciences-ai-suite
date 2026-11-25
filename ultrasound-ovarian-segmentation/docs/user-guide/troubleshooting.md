@@ -145,6 +145,20 @@ Enter a valid path in **Video / image source** (a `.mp4` file or a folder of fra
 leave the field blank to use the `data\OTU_2d\images` dataset you prepared during model
 preparation. The path is resolved on the machine running the server.
 
+## Web Dashboard: Start Fails with "input source must be inside the app folder or your home folder"
+
+For safety, the web dashboard only reads sources inside the application folder or your
+user profile folder (for example `C:\Users\<you>`). To use clips stored elsewhere, such
+as another drive, list the extra folders in `WEBAPP_INPUT_ROOTS` (separate multiple
+folders with `;`) before launching:
+
+```powershell
+$env:WEBAPP_INPUT_ROOTS = "D:\ultrasound;E:\clips"
+.\run_webapp.ps1
+```
+
+The command-line application (`run.ps1`) is not affected.
+
 ## Web Dashboard: "HW monitoring: DISABLED"
 
 The browser still shows CPU and memory (via `psutil`), but the iGPU, NPU, and power graphs
