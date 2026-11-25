@@ -199,7 +199,9 @@ your browser; later launches skip the build. Next:
    webcam, or folder of still ultrasound frames).
 2. In **Video / image source**, enter the path to a clip (`.mp4`) or a folder of
    frames — or leave it blank to use the `data\OTU_2d\images` dataset you
-   prepared during model preparation.
+   prepared during model preparation. The path must be inside the application folder
+   or your user profile folder; to allow other folders, see
+   [Troubleshooting](./troubleshooting.md).
 3. Click **Start** in the top bar.
 
 The segmentation video opens in a separate OpenCV pop-up (*Original |

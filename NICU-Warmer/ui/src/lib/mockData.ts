@@ -8,13 +8,20 @@
 
 import type { NicuState } from '../types/nicu';
 
+// Uniform random in [0, 1) from the Web Crypto API.
+function random(): number {
+  const buf = new Uint32Array(1);
+  crypto.getRandomValues(buf);
+  return buf[0] / 0x100000000;
+}
+
 // ─── Waveform generator (for mock only) ──────────────────────────────────────
 function generateWaveform(length: number): number[] {
   const waveform: number[] = [];
   for (let i = 0; i < length; i++) {
     waveform.push(
       Math.sin((i / length) * Math.PI * 2 * 8) * 0.6 +
-      (Math.random() - 0.5) * 0.15
+      (random() - 0.5) * 0.15
     );
   }
   return waveform;
@@ -113,13 +120,13 @@ export const mockNicuState: NicuState = {
 // ─── Live mock updater ────────────────────────────────────────────────────────
 export function generateLiveMockState(prev: NicuState): NicuState {
   const jitter = (val: number, range: number) =>
-    Math.round((val + (Math.random() - 0.5) * range) * 100) / 100;
+    Math.round((val + (random() - 0.5) * range) * 100) / 100;
 
   // Simulate waveform scroll (matches waveform_append.append behavior)
   const newWaveform = [...prev.rppg.waveform.slice(1)];
   newWaveform.push(
     Math.sin((Date.now() / 1000) * Math.PI * 2 * 1.2) * 0.6 +
-    (Math.random() - 0.5) * 0.15
+    (random() - 0.5) * 0.15
   );
 
   // Simulate sessionDuration counting to 30 then resetting (matches rppg_elapsed 0..30)
@@ -140,14 +147,14 @@ export function generateLiveMockState(prev: NicuState): NicuState {
     // snap.status.patient_present
     // confidence: null — backend never sends this
     patient: {
-      detected: Math.random() > 0.03,
+      detected: random() > 0.03,
       confidence: null,
     },
 
     // snap.status.people_present
     // count/confidence: null — backend never sends these
     caretaker: {
-      detected: Math.random() > 0.08,
+      detected: random() > 0.08,
       count: null,
       confidence: null,
     },
@@ -175,7 +182,7 @@ export function generateLiveMockState(prev: NicuState): NicuState {
       ...m,
       fps: Math.round(jitter(m.fps, 2) * 10) / 10,
       latency: Math.max(1, Math.round(jitter(m.latency, 1.5) * 10) / 10),
-      framesProcessed: m.framesProcessed + Math.floor(Math.random() * 3),
+      framesProcessed: m.framesProcessed + Math.floor(random() * 3),
     })),
   };
 }

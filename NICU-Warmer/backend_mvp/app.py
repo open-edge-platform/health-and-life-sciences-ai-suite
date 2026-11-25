@@ -1164,7 +1164,8 @@ def create_app(config_path: str) -> Flask:
                     "metrics": {"runtime_status": "error"},
                 }
             )
-            return jsonify({"error": str(exc)}), 500
+            logger.exception("Pipeline start failed")
+            return jsonify({"error": "failed to start pipeline"}), 500
 
     @app.post("/stop")
     def stop() -> Response:
@@ -1489,8 +1490,8 @@ def create_app(config_path: str) -> Flask:
                     return jsonify({"error": f"ROI '{k}' must be between 0 and 1, got {v}"}), 400
             if roi["top"] >= roi["bottom"] or roi["left"] >= roi["right"]:
                 return jsonify({"error": "ROI top must be < bottom and left must be < right"}), 400
-        except (KeyError, TypeError, ValueError) as exc:
-            return jsonify({"error": f"Invalid ROI data: {exc}. Provide top, left, bottom, right (0-1)."}), 400
+        except (KeyError, TypeError, ValueError):
+            return jsonify({"error": "Invalid ROI data. Provide top, left, bottom, right (0-1)."}), 400
         backend._user_config["roi"] = roi
         backend._user_config["roi_custom"] = True
         if backend.lifecycle.state() in {Lifecycle.STARTING, Lifecycle.RUNNING}:
@@ -1626,7 +1627,8 @@ def create_app(config_path: str) -> Flask:
             except Exception as exc:
                 backend.lifecycle.mark_error(str(exc))
                 backend._has_pending_changes = False
-                return jsonify({"error": str(exc)}), 500
+                logger.exception("Pipeline restart failed")
+                return jsonify({"error": "failed to restart pipeline"}), 500
         else:
             # Not running — config already stored, will apply on next start
             backend._has_pending_changes = False

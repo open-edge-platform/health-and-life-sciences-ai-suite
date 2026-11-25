@@ -24,7 +24,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from .registry import USE_CASES  # noqa: E402
-from .pipeline_worker import PipelineWorker  # noqa: E402
+from .pipeline_worker import PipelineWorker, StartError  # noqa: E402
 
 # Hardware-utilization monitoring (CPU/GPU/NPU/power/memory), ported from the
 # Intel Education AI Suite. The Windows collectors require win32pdh (pywin32)
@@ -189,6 +189,8 @@ def usecases():
 @app.post("/api/start")
 def start():
     body = request.get_json(force=True, silent=True) or {}
+    if not body.get("device"):
+        return jsonify({"ok": False, "error": "device is required"}), 400
     try:
         # The model/use-case is fixed at launch (WEBAPP_USECASE); the UI only
         # supplies device / precision / source.
@@ -201,8 +203,11 @@ def start():
             except Exception as exc:
                 print(f"[webapp] monitoring start failed: {exc}", file=sys.stderr)
         return jsonify({"ok": True})
+    except StartError as exc:
+        return jsonify({"ok": False, "error": exc.user_message}), 400
     except Exception as exc:
-        return jsonify({"ok": False, "error": str(exc)}), 400
+        print(f"[webapp] start failed: {exc}", file=sys.stderr)
+        return jsonify({"ok": False, "error": "Start failed - see the webapp console log for details."}), 500
 
 
 @app.post("/api/stop")
@@ -312,7 +317,7 @@ def hardware_metrics():
 def start_monitoring_endpoint():
     """Reference-parity endpoint: begin hardware-utilization sampling."""
     if not _MON_OK:
-        return jsonify({"status": "unavailable", "message": _MON_ERR})
+        return jsonify({"status": "unavailable", "message": "Hardware monitoring is unavailable"})
     _reset_mon_logs()
     _mon_start(str(_MON_LOGS))
     return jsonify({"status": "success", "message": "Monitoring started"})
