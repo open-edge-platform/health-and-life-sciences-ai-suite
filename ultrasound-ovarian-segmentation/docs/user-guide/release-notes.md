@@ -14,7 +14,7 @@ hide_directive-->
 
 This is the initial release of the Ultrasound Ovarian Segmentation sample application.
 
-### New
+**New**:
 
 - Real-time, promptless ovarian tumor segmentation on 2D ultrasound using a
   SegFormer-B5 (DS2Net) model in the FP16 OpenVINO™ Intermediate
