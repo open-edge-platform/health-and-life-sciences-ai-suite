@@ -17,13 +17,11 @@
 
 FROM intel/dlstreamer-pipeline-server:2026.3.0-ubuntu24-rc2
  
-# Optional corporate proxy (leave empty for none).
-ARG HTTP_PROXY=
-ARG HTTPS_PROXY=
-ARG NO_PROXY=
-ENV HTTP_PROXY=${HTTP_PROXY} HTTPS_PROXY=${HTTPS_PROXY} NO_PROXY=${NO_PROXY} \
-    http_proxy=${HTTP_PROXY} https_proxy=${HTTPS_PROXY} no_proxy=${NO_PROXY} \
-    DEBIAN_FRONTEND=noninteractive \
+# Build proxy: pass with --build-arg http_proxy=... (docker-compose.yaml does this).
+# The *_proxy / *_PROXY names are Docker predefined build args, so RUN steps see
+# them but they are NOT written to the image config or `docker history`. Do not
+# declare them with ARG/ENV here, or the build host's proxy ships in the image.
+ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1
  
