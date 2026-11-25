@@ -139,7 +139,7 @@ class GpuGovernor:
             "throttle_engaged": engaged,
             "throttle_delay_ms": delay_ms,
             "within_cap": bool(peak < self.cap_pct),
-            "note": "" if _SAMPLER_OK else f"GPU counters unavailable ({_SAMPLER_ERR})",
+            "note": "" if _SAMPLER_OK else "GPU counters unavailable",
         }
 
     # ---- self-test -----------------------------------------------------

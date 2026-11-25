@@ -15,6 +15,18 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 MODEL_DIR = "/models/ai-ecg"
 
 
+def resolve_data_path(filename: str) -> str:
+    """Return the absolute path of ``filename`` inside DATA_DIR.
+
+    Raises ValueError if the name would resolve outside DATA_DIR.
+    """
+    root = os.path.realpath(DATA_DIR)
+    path = os.path.realpath(os.path.join(root, os.path.basename(filename)))
+    if not path.startswith(root + os.sep):
+        raise ValueError("invalid filename")
+    return path
+
+
 class HubertECGInferenceEngine:
     """Inference helper for the backbone ECG encoder IR.
 
@@ -91,7 +103,7 @@ class HubertECGInferenceEngine:
         return seq[None, :]  # shape (1, target_len)
 
     def predict(self, filename: str) -> Dict[str, Any]:
-        file_path = os.path.join(DATA_DIR, filename)
+        file_path = resolve_data_path(filename)
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"ECG file not found: {filename}")
 

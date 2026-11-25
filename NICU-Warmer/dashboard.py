@@ -145,7 +145,7 @@ def receive_rppg_data():
         session_id = c.lastrowid
         conn.close()
         
-        print(f"rPPG session saved with ID: {session_id}, Heart Rate: {data['heart_rate_avg']} BPM")
+        print(f"rPPG session saved with ID: {session_id}")
         
         return jsonify({
             'success': True, 
@@ -154,8 +154,8 @@ def receive_rppg_data():
         }), 200
         
     except Exception as e:
-        print(f"Error saving rPPG data: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        print(f"Error saving rPPG data: {str(e)}", file=sys.stderr)
+        return jsonify({'error': 'failed to save rPPG data'}), 500
 
 @app.route('/api/rppg/latest', methods=['GET'])
 def get_latest_rppg():
@@ -198,7 +198,8 @@ def get_latest_rppg():
             return jsonify({'message': 'No rPPG sessions found'}), 404
             
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        print(f"Error reading latest rPPG session: {e}", file=sys.stderr)
+        return jsonify({'error': 'failed to read rPPG data'}), 500
 
 # ---------------- Additional Helper Functions for API (Migration Phase 1) ---------------- #
 def _bool_from_text(val: str) -> bool:
@@ -347,15 +348,14 @@ def api_health():
         conn.close()
         return jsonify({'ok': True, 'message': 'healthy'}), 200
     except Exception as e:
-        return jsonify({'ok': False, 'error': str(e)}), 500
+        print(f"Health check failed: {e}", file=sys.stderr)
+        return jsonify({'ok': False, 'error': 'database unavailable'}), 500
 
 @app.route('/images/<path:filename>')
 def serve_state_image(filename):
     # Serve image assets from local images directory for frontend
+    # send_from_directory rejects paths outside base_dir and 404s on missing files.
     base_dir = Path(__file__).parent / 'images'
-    target = base_dir / filename
-    if not target.exists():
-        return Response(status=404)
     return send_from_directory(base_dir, filename)
 
 @app.route('/api/debug/models', methods=['GET'])
@@ -492,7 +492,8 @@ def api_stream():
                     _last_stream_payload = snap
                     yield f"data: {json.dumps(snap)}\n\n"
             except Exception as e:
-                yield f"data: {json.dumps({'error':'stream_failure','detail':str(e)})}\n\n"
+                print(f"SSE snapshot failed: {e}", file=sys.stderr)
+                yield f"data: {json.dumps({'error':'stream_failure'})}\n\n"
             # Faster tick improves perceived UI smoothness (frame marker updates).
             # Keep modest to avoid unnecessary CPU/network churn.
             time.sleep(float(os.environ.get('SSE_INTERVAL_S', '0.2')))
@@ -546,7 +547,8 @@ def api_rppg_stop():
         conn.close()
         metrics['session_id'] = sess_id
     except Exception as e:
-        return jsonify({'error': f'failed to save session: {e}'}), 500
+        print(f"Failed to save rPPG session: {e}", file=sys.stderr)
+        return jsonify({'error': 'failed to save session'}), 500
     metrics['started_at'] = session_start
     return jsonify({'success': True, **metrics})
 
@@ -1188,7 +1190,7 @@ def process_frame():
                             metrics['session_id'] = sess_id
                             metrics['started_at'] = session_start
                             if DEBUG_MODE:
-                                print(f"[DEBUG] rPPG auto-stop saved session id={sess_id} hr_avg={metrics['heart_rate_avg']:.2f}")
+                                print(f"[DEBUG] rPPG auto-stop saved session id={sess_id}")
                         except Exception as e:
                             if DEBUG_MODE:
                                 print(f"[DEBUG] rPPG auto-stop save failed: {e}")

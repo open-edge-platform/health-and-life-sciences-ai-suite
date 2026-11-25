@@ -79,8 +79,8 @@ def main():
         
         # Display results
         logger.info(f"\n  📊 Results:")
-        logger.info(f"    Heart Rate:      {result['metrics']['heart_rate']:.1f} BPM")
-        logger.info(f"    Respiration Rate: {result['metrics']['resp_rate']:.1f} BrPM")
+        logger.info(f"    Heart rate computed:       {result['metrics'].get('heart_rate') is not None}")
+        logger.info(f"    Respiration rate computed: {result['metrics'].get('resp_rate') is not None}")
         logger.info(f"    Pulse waveform:   {len(result['waveforms']['pulse'])} samples")
         logger.info(f"    Resp waveform:    {len(result['waveforms']['resp'])} samples")
     
