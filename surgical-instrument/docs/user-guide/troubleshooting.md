@@ -49,7 +49,7 @@
    - Verify `/dev/dri` exists and your user is in the `render` group
      (`id -nG | tr ' ' '\n' | grep -E '^render$'`). Log out and back in after
      `make setup-prerequisites` if you were just added.
-   - `torch` must be a `+xpu` build (e.g. `torch==2.7.1+xpu`) from the
+   - `torch` must be a `+xpu` build (e.g. `torch==2.12.1+xpu`) from the
      `https://download.pytorch.org/whl/xpu` index. Stock CPU or CUDA wheels
      do not expose `torch.xpu`. Recreate the venv with
      `rm -rf .venv-backend && make backend-venv`.

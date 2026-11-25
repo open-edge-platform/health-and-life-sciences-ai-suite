@@ -14,7 +14,7 @@ psutil==6.0.0
 # torch + torchvision are installed by `make backend-venv` from the
 # Intel XPU wheel index BEFORE this requirements.txt, because they are not
 # available on PyPI:
-#   pip install torch==2.7.1 torchvision==0.22.1 --index-url https://download.pytorch.org/whl/xpu
+#   pip install torch==2.12.1 torchvision==0.27.1 --index-url https://download.pytorch.org/whl/xpu
 ultralytics==8.4.75
 openvino==2026.2.0
 opencv-python==4.10.0.84
