@@ -2,8 +2,8 @@
 
 > [!NOTE]
 > This application is for **reference and evaluation purposes only**. It is
-> **not intended for direct use in clinical or diagnostic environments** and is
-> not validated for such a purpose.
+> **not intended for direct use in clinical or diagnostic environments** and is not
+> validated for such a purpose.
 
 Real-time ovarian tumor segmentation in 2D ultrasound on Intel iGPU (with a
 CPU fallback) using the OpenVINO™ Toolkit. The application ships two interchangeable models,
@@ -74,7 +74,7 @@ these ways:
   .\prepare_model.ps1 -Train -Verify   # train -> export -> verify
   ```
 
-The commands above build the default `ds2net` arch. For the `sam` arch, add
+The commands above build the default `ds2net` architecture. For the `sam` architecture, add
 `-Arch sam` — it produces three IRs and needs the stock SAM ViT-B weights
 downloaded to `models/` first (see the guide):
 
@@ -144,7 +144,7 @@ Run on the CPU instead of the iGPU (development / sanity fallback):
 .\run.ps1 -Source file -Input clip.mp4 -Device CPU
 ```
 
-Run the prompted SAM-256 arch instead of the default DS2Net (after preparing its
+Run the prompted SAM-256 architecture instead of the default DS2Net (after preparing its
 IRs):
 
 ```powershell
@@ -153,8 +153,8 @@ IRs):
 
 > [!NOTE]
 > Both models target the Intel iGPU (`-Device GPU`); `CPU` is a development /
-  sanity fallback. The **NPU is not supported** — passing `-Device NPU` logs a
-  notice and uses the GPU (or CPU) instead.
+> sanity fallback. The **NPU is not supported** — passing `--device NPU` logs a
+> notice and uses the GPU (or CPU) instead.
 
 Record an annotated video, or tighten the GPU cap (extra flags after `--` are
 forwarded to the application):
@@ -163,7 +163,7 @@ forwarded to the application):
 .\run.ps1 -Source file -Input clip.mp4 -- --record out.mp4 --gpu-cap 70
 ```
 
-See [Runtime Configuration](docs/user-guide/runtime-configuration.md) for every
+See [Runtime Configuration](./docs/user-guide/runtime-configuration.md) for every
 flag and environment variable.
 
 ## GPU utilization cap
@@ -200,7 +200,7 @@ ultrasound-ovarian-segmentation/
   webapp/                   # web dashboard: Flask control plane + React UI (npm build)
   monitoring/               # hardware-utilization collectors + governor counter source
   models/                   # produced locally (git-ignored); see models/README.md
-  docs/user-guide/          # setup, runtime configuration, troubleshooting
+  docs/user-guide/          # setup, runtime configuration, application flow, uninstall, troubleshooting
   setup.ps1                 # create venv + install runtime deps
   prepare_model.ps1         # -Arch {ds2net,sam}: train/export model(s) into models/
   run.ps1                   # -Arch {ds2net,sam}: launch the segmentation pop-up

@@ -37,6 +37,29 @@ resolve_render_group_id() {
   return 1
 }
 
+# Prefer the host NPU user-space driver and compiler when installed. They match
+# the host kernel driver/firmware and cover platforms (e.g. Nova Lake) that the
+# driver bundled in the images does not; current OpenVINO wheels also require
+# libopenvino_intel_npu_compiler_loader.so, which the bundled driver lacks.
+HOST_LIB_DIR="/usr/lib/x86_64-linux-gnu"
+NPU_HOST_VOLUMES=""
+
+resolve_npu_host_volumes() {
+  local umd="${HOST_LIB_DIR}/libze_intel_npu.so.1"
+  local lib
+
+  [[ -e "${umd}" ]] || return 0
+  for lib in libopenvino_intel_npu_compiler.so libopenvino_intel_npu_compiler_loader.so; do
+    [[ -f "${HOST_LIB_DIR}/${lib}" ]] || return 0
+  done
+
+  NPU_HOST_VOLUMES="    volumes:
+      - \"$(readlink -f "${umd}"):${umd}:ro\"
+      - \"${HOST_LIB_DIR}/libopenvino_intel_npu_compiler.so:${HOST_LIB_DIR}/libopenvino_intel_npu_compiler.so:ro\"
+      - \"${HOST_LIB_DIR}/libopenvino_intel_npu_compiler_loader.so:${HOST_LIB_DIR}/libopenvino_intel_npu_compiler_loader.so:ro\""
+  echo "Using host NPU driver and compiler libraries from ${HOST_LIB_DIR}" >&2
+}
+
 enable_npu_override() {
   HAS_NPU=true
 
@@ -45,6 +68,7 @@ enable_npu_override() {
       echo "Unable to resolve the host render group for NPU access. Ensure the render group and /dev/accel devices are available." >&2
       exit 1
     fi
+    resolve_npu_host_volumes
   fi
 }
 
@@ -59,6 +83,7 @@ if [[ "${ECG_DEVICE:-}" == "NPU" ]]; then
       - "/dev/accel/accel0:/dev/accel/accel0"
     group_add:
       - "${RENDER_GROUP_ID}"
+${NPU_HOST_VOLUMES}
 EOF
 fi
 
@@ -73,6 +98,7 @@ if [[ "${POSE_3D_DEVICE:-}" == "NPU" ]]; then
       - "/dev/accel/accel0:/dev/accel/accel0"
     group_add:
       - "${RENDER_GROUP_ID}"
+${NPU_HOST_VOLUMES}
 EOF
 fi
 
@@ -87,6 +113,7 @@ if [[ "${RPPG_DEVICE:-}" == "NPU" ]]; then
       - "/dev/accel/accel0:/dev/accel/accel0"
     group_add:
       - "${RENDER_GROUP_ID}"
+${NPU_HOST_VOLUMES}
 EOF
 fi
 
