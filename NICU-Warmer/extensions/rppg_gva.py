@@ -274,10 +274,8 @@ class RppgCallback:
             frame.add_message(json.dumps({"rppg": result}))
 
             if self._frame_count % 100 == 0:
-                logger.info("rPPG frame %d: HR=%.1f RR=%.1f conf=%.2f",
+                logger.info("rPPG frame %d: conf=%.2f",
                             self._frame_count,
-                            result.get("heart_rate_bpm") or 0,
-                            result.get("respiration_rate_bpm") or 0,
                             result.get("signal_confidence", 0))
 
         except Exception as exc:

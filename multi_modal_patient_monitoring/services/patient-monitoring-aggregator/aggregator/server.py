@@ -1,6 +1,7 @@
 import asyncio
 import grpc
 import json
+import logging
 import os
 import time
 import threading
@@ -19,6 +20,8 @@ from proto import vital_pb2, vital_pb2_grpc, pose_pb2, pose_pb2_grpc
 from .consumer import VitalConsumer
 from .ws_broadcaster import SSEManager
 from .ai_ecg_client import AIECGClient
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Aggregator Service")
 
@@ -194,7 +197,8 @@ async def start_workloads(target: str = Query("dds-bridge", description="Which w
             resp = requests.post(url, timeout=3)
             return f"{resp.status_code}: {resp.text}"
         except Exception as exc:
-            return f"error: {exc}"
+            logger.warning("Start request to %s failed: %s", url, exc)
+            return "error: service unreachable"
         
     def _check_status(url: str) -> bool:
         """Check if service is already running"""
@@ -252,7 +256,8 @@ async def _stop_workloads_internal(targets: set[str]) -> dict[str, str]:
             resp = requests.post(url, timeout=3)
             return f"{resp.status_code}: {resp.text}"
         except Exception as exc:
-            return f"error: {exc}"
+            logger.warning("Stop request to %s failed: %s", url, exc)
+            return "error: service unreachable"
 
     def _check_status(url: str) -> bool:
         """Check if service is running"""

@@ -34,6 +34,30 @@ from .registry import USE_CASES
 log = logging.getLogger("webapp.pipeline")
 
 
+class StartError(Exception):
+    """Start request rejected; ``user_message`` is safe to show in the UI."""
+
+    def __init__(self, user_message: str):
+        super().__init__(user_message)
+        self.user_message = user_message
+
+
+def _input_roots() -> list[str]:
+    """Directories the Source box may read from (app root, home, WEBAPP_INPUT_ROOTS)."""
+    roots = [str(_APP_ROOT), str(Path.home())]
+    roots += [r for r in os.environ.get("WEBAPP_INPUT_ROOTS", "").split(os.pathsep) if r]
+    return [os.path.realpath(r) for r in roots]
+
+
+def _resolve_input(inp: str) -> str | None:
+    """Resolve ``inp`` and return it only if it lies inside an allowed root."""
+    real = os.path.realpath(inp)
+    for root in _input_roots():
+        if real.startswith(root.rstrip(os.sep) + os.sep):
+            return real
+    return None
+
+
 def _percentile(xs: list[float], p: float) -> float:
     if not xs:
         return 0.0
@@ -97,16 +121,16 @@ class PipelineWorker:
               video: str | None = None) -> None:
         with self._lock:
             if self.state in ("loading", "running"):
-                raise RuntimeError("A pipeline is already running \u2014 stop it first.")
+                raise StartError("A pipeline is already running \u2014 stop it first.")
             if usecase_key not in USE_CASES:
-                raise KeyError(f"Unknown use-case: {usecase_key}")
+                raise StartError("Unknown use-case.")
             uc = USE_CASES[usecase_key]
             if not uc.enabled:
-                raise RuntimeError(f"{uc.label} is not wired up yet.")
+                raise StartError(f"{uc.label} is not wired up yet.")
             if device not in uc.devices:
-                raise ValueError(f"{uc.label} does not support device {device}.")
+                raise StartError(f"{uc.label} does not support the selected device.")
             if precision not in uc.precisions:
-                raise ValueError(f"{uc.label} does not support precision {precision}.")
+                raise StartError(f"{uc.label} does not support the selected precision.")
 
             cfg = self._build_config(uc, device, precision, video)
 
@@ -128,9 +152,14 @@ class PipelineWorker:
     def _build_config(self, uc, device: str, precision: str, video: str | None):
         """Translate a UI request into the src/ CLI Config (one inference path)."""
         inp = (video or "").strip() or str(_APP_ROOT / uc.default_video)
-        p = Path(inp)
+        resolved = _resolve_input(inp)
+        if resolved is None:
+            raise StartError(
+                "input source must be inside the app folder or your home folder. "
+                "Set WEBAPP_INPUT_ROOTS to allow other folders.")
+        p = Path(resolved)
         if not p.exists():
-            raise FileNotFoundError(
+            raise StartError(
                 f"input source not found: {inp}. Type a file or folder path in "
                 f"the Source box, or prepare the dataset so the default path "
                 f"({uc.default_video}) exists - see "
@@ -142,7 +171,7 @@ class PipelineWorker:
         if arch == "ds2net":
             ir = uc.ir_path(precision)
             if not ir.exists():
-                raise FileNotFoundError(
+                raise StartError(
                     f"model IR not built on this box: {ir}. Build it with  "
                     f".\\prepare_model.ps1 -Verify  (export a checkpoint) or  "
                     f".\\prepare_model.ps1 -Train -Verify  (train first), then Start "
@@ -154,7 +183,7 @@ class PipelineWorker:
             yolo = uc.bbox_ir_path(precision)
             for label, ir in (("encoder", enc), ("decoder", dec), ("yolo bbox", yolo)):
                 if not ir.exists():
-                    raise FileNotFoundError(
+                    raise StartError(
                         f"SAM {label} IR not built on this box: {ir}. Build the SAM "
                         f"models with  .\\prepare_model.ps1 -Arch sam , then Start "
                         f"again - see docs/user-guide/get-started/model-preparation.md")
@@ -222,7 +251,7 @@ class PipelineWorker:
                 if key in (27, ord("q")):
                     break
         except Exception as exc:  # noqa: BLE001
-            self.error = str(exc)
+            self.error = "Pipeline failed - see the webapp console log for details."
             self.state = "error"
             log.exception("pipeline failed: %s", exc)
         finally:
