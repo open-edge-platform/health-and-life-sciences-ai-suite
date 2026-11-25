@@ -6,14 +6,17 @@
 ```
 hide_directive-->
 
-# Release Notes: Ultrasound Ovarian Segmentation Sample Application
+# Release Notes: Ultrasound Ovarian Segmentation
 
 ## Version 2026.3.0
 
 **Release Date**: December 7, 2026
 
-This is the initial release of the Ultrasound Ovarian Segmentation sample application. It
-includes the following features:
+### Overview
+
+This is the initial release of the Ultrasound Ovarian Segmentation sample application.
+
+### New
 
 - Real-time, promptless ovarian tumor segmentation on 2D ultrasound using a
   SegFormer-B5 (DS2Net) model in the FP16 OpenVINO™ Intermediate
