@@ -1,5 +1,23 @@
 # Release Notes: NICU Warmer
 
+## Version 2026.3.0-rc1
+
+**Release Date**: TBD
+
+### New
+
+- Added NPU support on Intel Nova Lake platforms.
+
+### Improved
+
+- Image tags updated to the `2026.3.0-rc1` release, including the DL Streamer Pipeline Server image.
+- Documentation updates for the new repository location and system requirements.
+
+### Fixed
+
+- Fixed NPU pipeline startup with DL Streamer Pipeline Server 2026.3.
+- Fixed rPPG (vital-sign) and action-recognition inference with DL Streamer Pipeline Server 2026.3.
+
 ## Version 1.0.0
 
 **Release Date**: 2026
