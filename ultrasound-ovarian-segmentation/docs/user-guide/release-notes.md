@@ -10,13 +10,11 @@ hide_directive-->
 
 ## Version 2026.3.0
 
-**Release Date**: TBD
-
-### Overview
+**Release Date**: December 7, 2026
 
 This is the initial release of the Ultrasound Ovarian Segmentation sample application.
 
-### New
+**New**:
 
 - Real-time, promptless ovarian tumor segmentation on 2D ultrasound using a
   SegFormer-B5 (DS2Net) model in the FP16 OpenVINO™ Intermediate
@@ -28,7 +26,8 @@ This is the initial release of the Ultrasound Ovarian Segmentation sample applic
 - Built-in GPU utilization governor that enforces the KPI of less than 80% utilization on the
   busiest iGPU engine, with a per-run PASS or OVER verdict.
 - Model preparation backend (`backend/bootstrap`) that fine-tunes the model on the MMOTU-2D
-  dataset, exports it to OpenVINO™ IR in FP16 precision, and verifies Dice and IoU scores. The
+  dataset, exports it to OpenVINO™ IR in FP16 precision, and verifies Dice and Intersection over
+  Union (IoU) scores. The
   application ships the recipe, not the model weights. Reference accuracy is Dice 0.8657 and
   IoU 0.7913 at resolution 256 on the MMOTU-2D validation split.
 - Optional **`sam` model architecture** (`-Arch sam`), selectable at runtime as an alternative
